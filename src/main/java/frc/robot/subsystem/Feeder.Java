@@ -15,7 +15,7 @@ public class Feeder {
 	// Limit Switch Sensors
 	private DigitalInput genevaLimitSwitch = new DigitalInput(Constants.GENEVA_LIMIT_SWITCH_PORT);
 	private DigitalInput punchLimitSwitch = new DigitalInput(Constants.PUNCH_LIMIT_SWITCH_PORT);
-	
+
 	public Feeder() {
 		genevaDrive.setIdleMode(CANSparkMax.IdleMode.kBrake);
 	}
@@ -42,15 +42,5 @@ public class Feeder {
 
 	public double getGenevaPosition() {
 		return genevaEncoder.getPosition();
-	}
-
-	public void ExtendRetract(int millisecondsBetween) {
-		setPunchExtension(true);
-		try {
-			Thread.sleep(millisecondsBetween);
-		} catch (InterruptedException ex) {
-			System.err.println(ex);
-		}
-		setPunchExtension(false);
 	}
 }

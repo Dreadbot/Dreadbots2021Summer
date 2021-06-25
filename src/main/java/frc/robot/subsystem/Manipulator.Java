@@ -1,49 +1,29 @@
 package frc.robot.subsystem;
 
-public class Manipulator extends Subsystem{
+public class Manipulator {
 	private Intake intake;
 	private Feeder feeder;
 	private Shooter shooter;
-	private enum shooterStates{RAMPING, PUNCHING, RETRACTING, ADVANCE, ADVANCING};
-	private enum genevaStates{MOVE, MOVING, STOPPED, FORWARD, BACKWARD};
-	private genevaStates genevaState = genevaStates.STOPPED;
-	private genevaStates genevaDirection = genevaStates.FORWARD;
-	private shooterStates shooterState;
-	private shooterStates lastShooterState;
+
+	private enum ShooterState { RAMPING, PUNCHING, RETRACTING, ADVANCE, ADVANCING };
+	private enum GenevaState { MOVE, MOVING, STOPPED, FORWARD, BACKWARD };
+
+	private GenevaState genevaState = GenevaState.STOPPED;
+	private GenevaState genevaDirection = GenevaState.FORWARD;
+	private ShooterState shooterState = ShooterState.RAMPING;
+	private ShooterState lastShooterState;
+
 	private int stateChangeCounter;
 	private final int countsToExtend = 5;
 	private int numPunches;
 
 	public Manipulator(Intake intake, Feeder feeder, Shooter shooter){
-		super("Manipulator");
 		this.intake = intake;
 		this.feeder = feeder;
 		this.shooter = shooter;
-		shooterState = shooterStates.RAMPING;
+
 		numPunches = 0;
 		stateChangeCounter = 0;
-
-		configureTests(intake, shooter);
-	}
-
-	private void configureTests(Intake intake, Shooter shooter) {
-		/*addTest(()->{
-			intake.setPercentOutput(.3);
-		}, "Intake 30%", 5.0d);
-		addTest(()->{
-			intake.setPercentOutput(0);
-			resetManipulatorElements();
-		}, "Intake Stop", 1.0d);
-		addTest(()->sensorAdvanceGeneva(true, true), "Geneva Start Rotate", 1.0d);
-		addTest(()->resetManipulatorElements(), "Stop Geneva", 4.0d);
-		addTest(()->{
-			shooter.shoot(3750);
-			shooter.setHoodPercentOutput(.3);
-		}, "Shooter 2000rpm, Hood 30%", 5.0d);
-		addTest(()->{
-			shooter.setShootingPercentOutput(0);
-			shooter.setHoodPercentOutput(0);
-		}, "Shooter & Hood Stop", 1.0d);*/
 	}
 
 	public void prepareShot(double rpm, double aimPosition){
@@ -54,7 +34,7 @@ public class Manipulator extends Subsystem{
 	public double getSelectedRPM(double inches){
 		inches /= 12;
 		//equation from a regression we did by trial and error.
-		double value = ((-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676)*1000 + 200;
+		double value = ((-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676) * 1000 + 200;
 		value = MathUtils.clamp((Double)value, 0d, 4550d);
 		return value;
 	}
@@ -66,37 +46,32 @@ public class Manipulator extends Subsystem{
 	}
 
 	public int continuousShoot(double aimPosition, double genevaSpeed, double shootingRPM){
-		//finite state machine logic
-// System.out.println("Shooter state: " + shooterState.ordinal());
+		// Finite state machine logic
 
 		//Find difference between intended speed and actual speed
 		int speedDifference = (int) (Math.abs(shooter.getShootingSpeed()) - shootingRPM);
-		System.out.println("**********speed diff: "+speedDifference);
-		System.out.println("*************shooter state: "+shooterState);
-		System.out.println("feeder.getPunchSwitchState(): " + feeder.getPunchSwitchState());
-		//if speed is within acceptable margin of error, switch to punching
-		if(shooterState == shooterStates.RAMPING && speedDifference < 200 && speedDifference > 0){
+		
+		// If the speed is within the acceptable range for shooting, punch.
+		if(shooterState == shooterStates.RAMPING && speedDifference < 200 && speedDifference > -25) {
 			shooterState = shooterStates.PUNCHING;
 		}
-		else if(shooterState == shooterStates.RAMPING && speedDifference > -25 && speedDifference < 0){
-			shooterState = shooterStates.PUNCHING;
-		}
-		//Change state based on a counter so the punch has enough time to extend
-		else if(shooterState == shooterStates.PUNCHING && stateChangeCounter > countsToExtend){
+		// If punching and a tenth of a second has passed (stateChangeCounter) start to retract.
+		else if(shooterState == shooterStates.PUNCHING && stateChangeCounter > countsToExtend) {
 			shooterState = shooterStates.RETRACTING;
 			stateChangeCounter = 0;
 		}
-		//Change state based on a limit switch so that the solenoid has time to retract
-		else if(shooterState == shooterStates.RETRACTING && feeder.getPunchSwitchState()){
+
+		// If the punch is in a secure area, advance the Geneva drive.
+		else if(shooterState == shooterStates.RETRACTING && feeder.getPunchSwitchState()) {
 			shooterState = shooterStates.ADVANCE;
 			stateChangeCounter = 0;
 		}
-		//Change state if the geneva drive has rotated away from the limit switch
-		else if(shooterState == shooterStates.ADVANCE && !feeder.getGenevaSwitchState()){
+		// If the Geneva is in transit, the state becomes "ADVANCING"
+		else if(shooterState == shooterStates.ADVANCE && !feeder.getGenevaSwitchState()) {
 			shooterState = shooterStates.ADVANCING;
 		}
-		//Change state if the geneva drive has rotated back to the limit switch
-		else if(shooterState == shooterStates.ADVANCING && feeder.getGenevaSwitchState()){
+		// When the Geneva has reached the next punching area, begin ramping.
+		else if(shooterState == shooterStates.ADVANCING && feeder.getGenevaSwitchState()) {
 			shooterState = shooterStates.RAMPING;
 		}
 
@@ -110,7 +85,7 @@ public class Manipulator extends Subsystem{
 				stateChangeCounter++;
 				break;
 			case RETRACTING:
-				if(lastShooterState != shooterStates.RETRACTING){
+				if(lastShooterState != shooterStates.RETRACTING) {
 					++numPunches;
 				}
 				feeder.setPunchExtension(false);
@@ -120,6 +95,7 @@ public class Manipulator extends Subsystem{
 				feeder.setSpin(genevaSpeed);
 				break;
 		}
+		
 		shooter.setHoodPosition(aimPosition);
 		shooter.shoot(-shootingRPM);
 
