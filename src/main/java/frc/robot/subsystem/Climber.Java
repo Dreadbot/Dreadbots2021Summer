@@ -3,6 +3,7 @@ import com.revrobotics.CANPIDController;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Climber{
+    
     private Solenoid telescopeSol;
     private CANSparkMax winchMotor;
     private CANPIDController winchPID;
