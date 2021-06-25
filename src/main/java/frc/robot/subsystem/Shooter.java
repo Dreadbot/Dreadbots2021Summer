@@ -102,7 +102,7 @@ public class Shooter {
 		maxHoodPosition = position;
 		upperLimitHit = true;
 	}
-s
+
 	public void setUpperLimitHit(boolean value) {
 		upperLimitHit = value;
 	}
