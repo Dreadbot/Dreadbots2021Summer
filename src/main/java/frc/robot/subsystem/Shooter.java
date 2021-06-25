@@ -71,10 +71,6 @@ public class Shooter {
 		aimingMotorPID.setReference(rotations, ControlType.kPosition);
 	}
 
-	public void setAimHeightP(double p) {
-		aimingMotorPID.setP(p);
-	}
-
 	public void setShootingPercentOutput(double percentOutput) {
 		shooterMotor.set(percentOutput);
 	}
@@ -97,32 +93,26 @@ public class Shooter {
 		return (int) shooterMotorEncoder.getVelocity();
 	}
 
-	public void setLowerLimit(int position) {
+	public void setLowerLimitPosition(int position) {
 		minHoodPosition = position;
 		lowerLimitHit = true;
 	}
 
-	public void setUpperLimit(int position) {
+	public void setUpperLimitPosition(int position) {
 		maxHoodPosition = position;
 		upperLimitHit = true;
 	}
-
-	public void setUpperBool(boolean value) {
+s
+	public void setUpperLimitHit(boolean value) {
 		upperLimitHit = value;
 	}
 
-	public void setLowerBool(boolean value) {
+	public void setLowerLimitHit(boolean value) {
 		lowerLimitHit = value;
 	}
 
-	boolean getAimReadiness() {
+	boolean isReadyToAim() {
 		return readyToAim;
-	}
-
-	public void setAimReadiness(boolean ready) {
-		readyToAim = ready;
-		if (ready)
-			range = maxHoodPosition - minHoodPosition;
 	}
 
 	public int getHoodPosition() {
@@ -145,7 +135,7 @@ public class Shooter {
 		return !lowerLimitSwitch.get();
 	}
 
-	public void hoodCalibration(){
+	public void hoodCalibration() {
         if (readyToAim) return;
         
         if (lowerLimitHit && upperLimitHit) {
@@ -159,7 +149,7 @@ public class Shooter {
 
         // Approach the lower limit of the hood position.
         if(getLowerLimitSwitchValue() && !lowerLimitHit){ 
-		  setLowerLimit(getHoodPosition());
+		  setLowerLimitPosition(getHoodPosition());
           
           // Approach the lower limit
           setHoodPercentOutput(-0.75);
@@ -169,7 +159,7 @@ public class Shooter {
 
         // Approach the upper limit of the hood position.
 		if(getUpperLimitSwitchValue() && !upperLimitHit) {
-		  setUpperLimit(getHoodPosition());
+		  setUpperLimitPosition(getHoodPosition());
           
           // Approach the upper limit
           setHoodPercentOutput(0.75);
