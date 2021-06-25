@@ -22,18 +22,18 @@ public class Feeder {
 		this.punch = new Solenoid(Constants.PUNCH_SOLENOID_ID);
 
 		genevaDrive.setIdleMode(CANSparkMax.IdleMode.kBrake);
-		genevaControler = genevaDrive.getPIDController();
+		genevaController = genevaDrive.getPIDController();
 		genevaEncoder = genevaDrive.getEncoder();
 		genevaEncoder.setPosition(0);
 		genevaLimitSwitch = new DigitalInput(genevaSwitchPort);
 		punchLimitSwitch = new DigitalInput(punchSwitchPort);
 
-		genevaControler.setP(.002);
-		genevaControler.setI(1e-6);
-		genevaControler.setD(.02);
-		genevaControler.setFF(.000015);
-		genevaControler.setIZone(0);
-		genevaControler.setOutputRange(-1.0, 1.0);
+		genevaController.setP(.002);
+		genevaController.setI(1e-6);
+		genevaController.setD(.02);
+		genevaController.setFF(.000015);
+		genevaController.setIZone(0);
+		genevaController.setOutputRange(-1.0, 1.0);
 	}
 
 	public void setSpin(double power) {
