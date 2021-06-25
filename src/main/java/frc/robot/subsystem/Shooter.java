@@ -171,7 +171,7 @@ public class Shooter {
 		if(getUpperLimitSwitchValue() && !upperLimitHit) {
 		  setUpperLimit(getHoodPosition());
           
-          // Approach the lower limit
+          // Approach the upper limit
           setHoodPercentOutput(0.75);
 		}
 	}
