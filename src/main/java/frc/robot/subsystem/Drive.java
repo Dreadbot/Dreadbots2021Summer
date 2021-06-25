@@ -26,11 +26,7 @@ public class Drive {
         this.robotDrive = new DifferentialDrive(this.leftFrontMotor, this.rightFrontMotor);
     }
 
-    public void arcadeDrive(double xSpeed, double zRotation) {
+    public void drive(double xSpeed, double zRotation) {
         this.robotDrive.arcadeDrive(xSpeed, zRotation);
-    }
-
-    public void arcadeDrive(double xSpeed, double zRotation, boolean squareInputs) {
-        this.robotDrive.arcadeDrive(xSpeed, zRotation, squareInputs);
     }
 }
