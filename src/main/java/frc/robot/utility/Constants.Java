@@ -15,6 +15,10 @@ public class Constants{
     public static final int ULTRA_PING_CHANNEL_ID = 6;
     public static final int ULTRA_ECHO_CHANNEL_ID = 7;
 
+    // Feeder
+    public static final int GENEVA_LIMIT_SWITCH_PORT = 9;
+    public static final int PUNCH_LIMIT_SWITCH_PORT = 3;
+
     //DRIVE CONSTANTS
     public static final double DRIVE_SPEED_MULTIPLIER = 0.75;
 
