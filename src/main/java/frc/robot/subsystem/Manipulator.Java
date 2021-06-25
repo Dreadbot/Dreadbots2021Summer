@@ -13,17 +13,14 @@ public class Manipulator {
 	private ShooterState shooterState = ShooterState.RAMPING;
 	private ShooterState lastShooterState;
 
-	private int stateChangeCounter;
+	private int stateChangeCounter = 0;
 	private final int countsToExtend = 5;
-	private int numPunches;
+	private int numPunches = 0;
 
 	public Manipulator(Intake intake, Feeder feeder, Shooter shooter){
 		this.intake = intake;
 		this.feeder = feeder;
 		this.shooter = shooter;
-
-		numPunches = 0;
-		stateChangeCounter = 0;
 	}
 
 	public void prepareShot(double rpm, double aimPosition){
@@ -33,15 +30,19 @@ public class Manipulator {
 
 	public double getSelectedRPM(double inches){
 		inches /= 12;
-		//equation from a regression we did by trial and error.
+		
+		// Quadratic regression in return units RPM given inches.
+		// omega(x) = -0.0029x^2 + 0.188026x + 1.7676
 		double value = ((-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676) * 1000 + 200;
-		value = MathUtils.clamp((Double)value, 0d, 4550d);
+		value = MathUtils.clamp((Double) value, 0d, 4550d);
 		return value;
 	}
 
 	public double getSelectedHoodPosition(double inches){
 		inches /= 12;
-		//equation from a regression we did by trial and error
+		
+		// Quadratic regression in return hood position given inches.
+		// p(x) = 7.14*10^-7x^2 + 8.51*10^-4x + 0.398
 		return ((7.14e-7 * inches * inches) + (8.51e-4 * inches) + 0.398);
 	}
 
@@ -103,9 +104,12 @@ public class Manipulator {
 		return numPunches;
 	}
 
+	/**
+	 * This function should be called continuously if the system is not shooting or collecting power cells. 
+	 * This function will get the system back into a state where the punch is retracted and the geneva gear 
+	 * is aligned in order to be able to begin the FSM again.
+	 */
 	public void resetManipulatorElements(){
-		//This function should be called continuously if the system is not shooting or collecting power cells
-		// this function will get the system back into a state where the punch is retracted and the geneva gear is aligned in order to be able to begin the FSM again
 		numPunches = 0;
 
 		//If the punch is out, retract it
@@ -116,9 +120,8 @@ public class Manipulator {
 		else if(!feeder.getPunchExtension() && !feeder.getGenevaSwitchState()){
 			//This is commented out in the C++ original and I'm not sure why
 			//feeder.setSpin(0.2);
-		}
-		//Once it reaches the limit switch, stop it
-		else{
+		} else {
+			//Once it reaches the limit switch, stop it
 			feeder.setSpin(0);
 		}
 		shooterState = shooterStates.RAMPING;
