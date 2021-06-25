@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.utility.Constants;
 
 public class Feeder {
+	// Hardware
 	private CANSparkMax genevaDrive = new CANSparkMax(Constants.GENEVA_MOTOR_ID, CANSparkMax.MotorType.kBrushless);
 	private Solenoid punch = new Solenoid(Constants.PUNCH_SOLENOID_ID);
 
+	// Limit Switch Sensors
 	private DigitalInput genevaLimitSwitch = new DigitalInput(Constants.GENEVA_LIMIT_SWITCH_PORT);
 	private DigitalInput punchLimitSwitch = new DigitalInput(Constants.PUNCH_LIMIT_SWITCH_PORT);
-
+	
 	public Feeder() {
 		genevaDrive.setIdleMode(CANSparkMax.IdleMode.kBrake);
 	}

@@ -8,14 +8,12 @@ import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.utility.Constants;
 
 public class Intake {
-	private CANSparkMax intakeMotor;
+	private CANSparkMax intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 	private CANPIDController pidController;
-	private Solenoid intakePin;
+	private Solenoid intakePin = new Solenoid(Constants.INTAKE_PIN_ID);
 
 	public Intake() {
-		this.intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 		this.pidController = intakeMotor.getPIDController();
-		this.intakePin = new Solenoid(Constants.INTAKE_PIN_ID);
 
 		this.pidController.setP(6e-5);
 		this.pidController.setI(1e-6);
@@ -39,11 +37,11 @@ public class Intake {
 		intakePin.set(true);
 	}
 
-	public void Start() {
+	public void start() {
 		intakeMotor.set(0.5d);
 	}
 
-	public void Stop() {
+	public void stop() {
 		intakeMotor.set(0.0d);
 	}
 
