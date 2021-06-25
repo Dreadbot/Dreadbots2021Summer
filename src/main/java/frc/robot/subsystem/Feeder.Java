@@ -11,7 +11,6 @@ public class Feeder {
 	private final int genevaSwitchPort = 9;
 	private final int punchSwitchPort = 3;
 	private CANSparkMax genevaDrive;
-	private CANPIDController genevaControler;
 	private CANEncoder genevaEncoder;
 	private Solenoid punch;
 	private DigitalInput genevaLimitSwitch;
