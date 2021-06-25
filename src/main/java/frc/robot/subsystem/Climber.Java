@@ -8,6 +8,11 @@ public class Climber{
     private CANSparkMax winchMotor;
     private CANPIDController winchPID;
 
+    public Climber() {
+        winchMotor = new CANSparkMax(-1, CANSparkMaxLowLevel.MotorType.kBrushless);
+        telescopeSol = new Solenoid(-1);
+    }
+
     public void SetTelescope(bool extended){
         telescopeSol.set(extended);
     }
