@@ -1,10 +1,12 @@
 package frc.robot.subsystem;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -31,6 +33,9 @@ public class Drive {
     private final CANSparkMax rightFrontMotor = new CANSparkMax(2, K_MOTORTYPE);
     private final CANSparkMax rightBackMotor = new CANSparkMax(3, K_MOTORTYPE);
 
+    // Gyroscope
+    private final AHRS gyroscope = new AHRS(SerialPort.Port.kUSB);
+
     // Slew Rate Limiters (Prevent unintentional erratic movements) at (1/3)sec
     private final SlewRateLimiter speedLimiter = new SlewRateLimiter(3);
     private final SlewRateLimiter rotLimiter = new SlewRateLimiter(3);
@@ -52,6 +57,9 @@ public class Drive {
         this.leftBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         this.rightFrontMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         this.rightBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
+        // Set up gyroscope
+        this.gyroscope.reset();
 
         // Set up the PID Controllers
         Drive.pidControllerSetup(leftFrontMotor);
