@@ -10,6 +10,7 @@ import frc.robot.utility.Constants;
 public class Feeder {
 	// Hardware
 	private CANSparkMax genevaDrive = new CANSparkMax(Constants.GENEVA_MOTOR_ID, CANSparkMax.MotorType.kBrushless);
+	private CANEncoder genevaEncoder;
 	private Solenoid punch = new Solenoid(Constants.PUNCH_SOLENOID_ID);
 
 	// Limit Switch Sensors
@@ -18,6 +19,16 @@ public class Feeder {
 
 	public Feeder() {
 		genevaDrive.setIdleMode(CANSparkMax.IdleMode.kBrake);
+		CANPIDController genevaController = genevaDrive.getPIDController();
+		genevaEncoder = genevaDrive.getEncoder();
+		genevaEncoder.setPosition(0);
+		
+		genevaController.setP(0.002);
+		genevaController.setI(1e-6);
+		genevaController.setD(.02);
+		genevaController.setFF(0.000015);
+		genevaController.setIZone(0);
+		genevaController.setOutputRange(-1.0, 1.0);
 	}
 
 	public void setSpin(double power) {
