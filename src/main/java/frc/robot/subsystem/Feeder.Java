@@ -5,17 +5,17 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
-import frc.robot.utility.Constants;
+import frc.robot.utility.DreadbotConstants;
 
 public class Feeder {
 	// Hardware
-	private CANSparkMax genevaDrive = new CANSparkMax(Constants.GENEVA_MOTOR_ID, CANSparkMax.MotorType.kBrushless);
+	private CANSparkMax genevaDrive = new CANSparkMax(DreadbotConstants.GENEVA_MOTOR_ID, CANSparkMax.MotorType.kBrushless);
 	private CANEncoder genevaEncoder;
-	private Solenoid punch = new Solenoid(Constants.PUNCH_SOLENOID_ID);
+	private Solenoid punch = new Solenoid(DreadbotConstants.PUNCH_SOLENOID_ID);
 
 	// Limit Switch Sensors
-	private DigitalInput genevaLimitSwitch = new DigitalInput(Constants.GENEVA_LIMIT_SWITCH_PORT);
-	private DigitalInput punchLimitSwitch = new DigitalInput(Constants.PUNCH_LIMIT_SWITCH_PORT);
+	private DigitalInput genevaLimitSwitch = new DigitalInput(DreadbotConstants.GENEVA_LIMIT_SWITCH_PORT);
+	private DigitalInput punchLimitSwitch = new DigitalInput(DreadbotConstants.PUNCH_LIMIT_SWITCH_PORT);
 
 	public Feeder() {
 		genevaDrive.setIdleMode(CANSparkMax.IdleMode.kBrake);

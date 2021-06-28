@@ -1,6 +1,6 @@
 package frc.robot.utility;
 
-public class Constants{
+public class DreadbotConstants {
     // Motor Ids
     public static final int INTAKE_MOTOR_ID = 5;
     public static final int GENEVA_MOTOR_ID = 6;

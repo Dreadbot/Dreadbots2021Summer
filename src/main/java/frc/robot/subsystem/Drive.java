@@ -1,14 +1,18 @@
 package frc.robot.subsystem;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 
 public class Drive {
     private static final MotorType K_MOTORTYPE = CANSparkMaxLowLevel.MotorType.kBrushless;
@@ -32,6 +36,9 @@ public class Drive {
     private final CANSparkMax leftBackMotor = new CANSparkMax(1, K_MOTORTYPE);
     private final CANSparkMax rightFrontMotor = new CANSparkMax(2, K_MOTORTYPE);
     private final CANSparkMax rightBackMotor = new CANSparkMax(3, K_MOTORTYPE);
+
+    // Odometry
+    private final DifferentialDriveOdometry odometry;
 
     // Gyroscope
     private final AHRS gyroscope = new AHRS(SerialPort.Port.kUSB);
@@ -66,6 +73,69 @@ public class Drive {
         Drive.pidControllerSetup(leftBackMotor);
         Drive.pidControllerSetup(rightFrontMotor);
         Drive.pidControllerSetup(rightBackMotor);
+
+        // Set up odometry
+        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyroscope.getYaw()));
+    }
+
+    public void periodic() {
+        final double leftPosition = getLeftFrontMotorEncoder().getPosition() * 0.0683;
+        final double rightPosition = getRightFrontMotorEncoder().getPosition() * 0.0683;
+        final var newPose = odometry.update(gyroscope.getRotation2d(),
+                leftPosition, -rightPosition);
+    }
+
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(
+            getLeftFrontMotorEncoder().getVelocity() * 0.00114,
+            -getRightFrontMotorEncoder().getVelocity() * 0.00114
+        );
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        resetEncoders();
+        odometry.resetPosition(pose, gyroscope.getRotation2d());
+    }
+
+    public void driveVolts(double leftVolts, double rightVolts) {
+        leftFrontMotor.setVoltage(leftVolts);
+        leftBackMotor.setVoltage(leftVolts);
+        rightFrontMotor.setVoltage(rightVolts);
+        rightBackMotor.setVoltage(rightVolts);
+    }
+
+    public void resetEncoders() {
+        getLeftFrontMotorEncoder().setPosition(0.0);
+        getLeftBackMotorEncoder().setPosition(0.0);
+        getRightFrontMotorEncoder().setPosition(0.0);
+        getRightBackMotorEncoder().setPosition(0.0);
+    }
+
+    public double getAverageEncoderDistance() {
+        return (getLeftFrontMotorEncoder().getPosition() + getRightFrontMotorEncoder().getPosition()) * (0.5 * 0.0683);
+    }
+
+    public void zeroHeading() {
+        gyroscope.reset();
+    }
+
+    public double getHeading() {
+        return gyroscope.getYaw();
+    }
+
+    public double getTurnRate() {
+        return -gyroscope.getRate();
+    }
+
+    public void stop() {
+        leftFrontMotor.set(0.0);
+        leftBackMotor.set(0.0);
+        rightFrontMotor.set(0.0);
+        rightBackMotor.set(0.0);
     }
 
     public void drive(double xSpeed, double zRotation) {
@@ -86,5 +156,37 @@ public class Drive {
         pidController.setIZone(0.1);
         pidController.setFF(0);
         pidController.setOutputRange(-1, 1);
+    }
+
+    public CANSparkMax getLeftFrontMotor() {
+        return leftFrontMotor;
+    }
+
+    public CANSparkMax getLeftBackMotor() {
+        return leftBackMotor;
+    }
+
+    public CANSparkMax getRightFrontMotor() {
+        return rightFrontMotor;
+    }
+
+    public CANSparkMax getRightBackMotor() {
+        return rightBackMotor;
+    }
+
+    public CANEncoder getLeftFrontMotorEncoder() {
+        return leftFrontMotor.getEncoder();
+    }
+
+    public CANEncoder getLeftBackMotorEncoder() {
+        return leftBackMotor.getEncoder();
+    }
+
+    public CANEncoder getRightFrontMotorEncoder() {
+        return rightFrontMotor.getEncoder();
+    }
+
+    public CANEncoder getRightBackMotorEncoder() {
+        return rightBackMotor.getEncoder();
     }
 }

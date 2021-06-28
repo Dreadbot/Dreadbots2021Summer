@@ -5,12 +5,12 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANPIDController;
 import edu.wpi.first.wpilibj.Solenoid;
-import frc.robot.utility.Constants;
+import frc.robot.utility.DreadbotConstants;
 
 public class Intake {
-	private CANSparkMax intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+	private CANSparkMax intakeMotor = new CANSparkMax(DreadbotConstants.INTAKE_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 	private CANPIDController pidController;
-	private Solenoid intakePin = new Solenoid(Constants.INTAKE_PIN_ID);
+	private Solenoid intakePin = new Solenoid(DreadbotConstants.INTAKE_PIN_ID);
 
 	public Intake() {
 		this.pidController = intakeMotor.getPIDController();
