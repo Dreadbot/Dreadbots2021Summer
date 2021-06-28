@@ -7,7 +7,7 @@ import com.revrobotics.CANPIDController;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.utility.Constants;
 
-public class Intake {
+public class ntake {
 	private CANSparkMax intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 	private CANPIDController pidController;
 	private Solenoid intakePin = new Solenoid(Constants.INTAKE_PIN_ID);
