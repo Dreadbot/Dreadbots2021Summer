@@ -8,12 +8,11 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.gamestate.Autonomous;
 //import frc.robot.gamestate.Teleoperated;
-import frc.robot.subsystem.*;
+import frc.robot.subsystem.Shooter;
 //import frc.robot.utility.Constants;
 import frc.robot.utility.DreadbotController;
 //import frc.robot.utility.logger.RobotLogger;
 
-import java.util.ArrayList;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,7 +22,7 @@ import java.util.ArrayList;
  */
 public class Robot extends TimedRobot {
     // SUBSYSTEMS
-    public Drive drive;
+    public SparkDrive sparkDrive;
     public Shooter shooter;
     public Intake intake;
     public Feeder feeder;
@@ -39,8 +38,8 @@ public class Robot extends TimedRobot {
 //	public boolean isTestingCompleted;
 
     // GAME STATE
-    //private Autonomous autonomous;
-    //private Teleoperated teleoperated;
+    private Autonomous autonomous;
+    private Teleoperated teleoperated;
 
     @Override
     public void robotInit() {
@@ -49,7 +48,7 @@ public class Robot extends TimedRobot {
         secondaryJoystick = new DreadbotController(1);
 
         // Subsystem Initialization
-        drive = new Drive();
+        sparkDrive = new SparkDrive();
         shooter = new Shooter();
 		intake = new Intake();
 		feeder = new Feeder();
@@ -58,11 +57,11 @@ public class Robot extends TimedRobot {
 			shooter);
 
         // Game State Initialization
-		/*teleoperated = new Teleoperated(primaryJoystick,
+		teleoperated = new Teleoperated(primaryJoystick,
 			secondaryJoystick,
 			manipulator,
 			sparkDrive);
-		autonomous = new Autonomous(sparkDrive, teleoperated.getTeleopFunctions(), manipulator, teleoperated);*/
+		autonomous = new Autonomous(sparkDrive, teleoperated.getTeleopFunctions(), manipulator, teleoperated);
 
         // Testing Initialization
         //testingSubsystems = new ArrayList<>();
@@ -72,17 +71,17 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        drive.periodic();
+        sparkDrive.periodic();
     }
 
     @Override
     public void autonomousInit() {
-        //autonomous.autonomousInit();
+        autonomous.autonomousInit();
     }
 
     @Override
     public void autonomousPeriodic() {
-        //autonomous.autonomousPeriodic();
+        autonomous.autonomousPeriodic();
     }
 
     @Override
@@ -100,7 +99,7 @@ public class Robot extends TimedRobot {
         shooter.setLowerLimitHit(false);
         shooter.setReadyToAim(false);
 
-        drive.getGyroscope().reset();
+        sparkDrive.getGyroscope().reset();
 
         intake.deployIntake();
     }
@@ -108,7 +107,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         // Drive
-//        teleoperated.teleopDrive();
+        teleoperated.teleopDrive();
 
         // Shooter
         shooter.setPID(SmartDashboard.getNumber("Shooter P", .0025),
@@ -119,15 +118,15 @@ public class Robot extends TimedRobot {
         shooter.hoodCalibration();
 
         SmartDashboard.putNumber("Shooter Velocity (Actual)", shooter.getShootingSpeed());
-//        teleoperated.teleopShooter();
+        teleoperated.teleopShooter();
 
         // Intake
-//        teleoperated.teleopIntake();
+        teleoperated.teleopIntake();
     }
 
     @Override
     public void disabledInit() {
-//        autonomous.disabledInit();
+        autonomous.disabledInit();
 
         shooter.setVisionLight(false);
     }

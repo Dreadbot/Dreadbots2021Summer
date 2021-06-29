@@ -11,36 +11,33 @@ import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.utility.DreadbotMath;
 
-public class Drive {
+public class SparkDrive {
     private static final MotorType K_MOTORTYPE = CANSparkMaxLowLevel.MotorType.kBrushless;
 
     // Drive Constants
-    private static final double K_MAX_SPEED = 3.0d; // meters per second
-    private static final double K_MAX_ACCELERATION = 1.5d; // meters per second squared
-    private static final double K_MAX_ANGULAR_SPEED = 2.0d * Math.PI; // radians per second
+    public static final double K_MAX_SPEED = 3.0d; // meters per second
+    public static final double K_MAX_ACCELERATION = 1.5d; // meters per second squared
+    public static final double K_MAX_ANGULAR_SPEED = 2.0d * Math.PI; // radians per second
 
     // Voltage Feedforward Constants
-    private static final double K_S = 0.229d; // volts
-    private static final double K_V = 0.0437d; // volt seconds per meter
-    private static final double K_A = 0.00512d; // volt seconds squared per meter
-    private static final double K_P = 1.19e-10d; // meters per second
+    public static final double K_S = 0.229d; // volts
+    public static final double K_V = 0.0437d; // volt seconds per meter
+    public static final double K_A = 0.00512d; // volt seconds squared per meter
+    public static final double K_P = 1.19e-10d; // meters per second
     
     // Robot Details
-    private static final double kTrackwidthMeters = 0.705d; // meters
+    public static final double kTrackwidthMeters = 0.705d; // meters
 
     // Motors
     private final CANSparkMax leftFrontMotor = new CANSparkMax(0, K_MOTORTYPE);
     private final CANSparkMax leftBackMotor = new CANSparkMax(1, K_MOTORTYPE);
     private final CANSparkMax rightFrontMotor = new CANSparkMax(2, K_MOTORTYPE);
     private final CANSparkMax rightBackMotor = new CANSparkMax(3, K_MOTORTYPE);
-
-    // Odometry
-    private final DifferentialDriveOdometry odometry;
 
     // Gyroscope
     private final AHRS gyroscope = new AHRS(SerialPort.Port.kUSB);
@@ -51,8 +48,10 @@ public class Drive {
 
     // Drive calculations class
     private final DifferentialDrive robotDrive = new DifferentialDrive(this.leftFrontMotor, this.rightFrontMotor);
+    private final DifferentialDriveOdometry odometry;
+    public static final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
-    public Drive() {
+    public SparkDrive() {
         // Back motors follow front motors 
         this.leftBackMotor.follow(this.leftFrontMotor);
         this.rightBackMotor.follow(this.rightFrontMotor);
@@ -71,10 +70,10 @@ public class Drive {
         this.gyroscope.reset();
 
         // Set up the PID Controllers
-        Drive.pidControllerSetup(leftFrontMotor);
-        Drive.pidControllerSetup(leftBackMotor);
-        Drive.pidControllerSetup(rightFrontMotor);
-        Drive.pidControllerSetup(rightBackMotor);
+        SparkDrive.pidControllerSetup(leftFrontMotor);
+        SparkDrive.pidControllerSetup(leftBackMotor);
+        SparkDrive.pidControllerSetup(rightFrontMotor);
+        SparkDrive.pidControllerSetup(rightBackMotor);
 
         // Set up odometry
         this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyroscope.getYaw()));
