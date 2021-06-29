@@ -1,5 +1,7 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.wpiutil.math.MathUtil;
+
 public class Manipulator {
 	private Intake intake;
 	private Feeder feeder;
@@ -31,17 +33,17 @@ public class Manipulator {
 	public double getSelectedRPM(double inches){
 		inches /= 12;
 		
-		// Quadratic regression in return units RPM given inches.
+		// Quadratic regression in return units RPM given inches from the power port target.
 		// omega(x) = -0.0029x^2 + 0.188026x + 1.7676
 		double value = ((-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676) * 1000 + 200;
-		value = MathUtils.clamp((Double) value, 0d, 4550d);
+		value = MathUtil.clamp((Double) value, 0d, 4550d);
 		return value;
 	}
 
 	public double getSelectedHoodPosition(double inches){
 		inches /= 12;
 		
-		// Quadratic regression in return hood position given inches.
+		// Quadratic regression in return hood position given inches from the power port target.
 		// p(x) = 7.14*10^-7x^2 + 8.51*10^-4x + 0.398
 		return ((7.14e-7 * inches * inches) + (8.51e-4 * inches) + 0.398);
 	}
@@ -53,27 +55,27 @@ public class Manipulator {
 		int speedDifference = (int) (Math.abs(shooter.getShootingSpeed()) - shootingRPM);
 		
 		// If the speed is within the acceptable range for shooting, punch.
-		if(shooterState == shooterStates.RAMPING && speedDifference < 200 && speedDifference > -25) {
-			shooterState = shooterStates.PUNCHING;
+		if(shooterState == ShooterState.RAMPING && speedDifference < 200 && speedDifference > -25) {
+			shooterState = ShooterState.PUNCHING;
 		}
 		// If punching and a tenth of a second has passed (stateChangeCounter) start to retract.
-		else if(shooterState == shooterStates.PUNCHING && stateChangeCounter > countsToExtend) {
-			shooterState = shooterStates.RETRACTING;
+		else if(shooterState == ShooterState.PUNCHING && stateChangeCounter > countsToExtend) {
+			shooterState = ShooterState.RETRACTING;
 			stateChangeCounter = 0;
 		}
 
 		// If the punch is in a secure area, advance the Geneva drive.
-		else if(shooterState == shooterStates.RETRACTING && feeder.getPunchSwitchState()) {
-			shooterState = shooterStates.ADVANCE;
+		else if(shooterState == ShooterState.RETRACTING && feeder.getPunchSwitchState()) {
+			shooterState = ShooterState.ADVANCE;
 			stateChangeCounter = 0;
 		}
 		// If the Geneva is in transit, the state becomes "ADVANCING"
-		else if(shooterState == shooterStates.ADVANCE && !feeder.getGenevaSwitchState()) {
-			shooterState = shooterStates.ADVANCING;
+		else if(shooterState == ShooterState.ADVANCE && !feeder.getGenevaSwitchState()) {
+			shooterState = ShooterState.ADVANCING;
 		}
 		// When the Geneva has reached the next punching area, begin ramping.
-		else if(shooterState == shooterStates.ADVANCING && feeder.getGenevaSwitchState()) {
-			shooterState = shooterStates.RAMPING;
+		else if(shooterState == ShooterState.ADVANCING && feeder.getGenevaSwitchState()) {
+			shooterState = ShooterState.RAMPING;
 		}
 
 		//Choose behavior based on the FSM state
@@ -86,7 +88,7 @@ public class Manipulator {
 				stateChangeCounter++;
 				break;
 			case RETRACTING:
-				if(lastShooterState != shooterStates.RETRACTING) {
+				if(lastShooterState != ShooterState.RETRACTING) {
 					++numPunches;
 				}
 				feeder.setPunchExtension(false);
@@ -124,8 +126,8 @@ public class Manipulator {
 			//Once it reaches the limit switch, stop it
 			feeder.setSpin(0);
 		}
-		shooterState = shooterStates.RAMPING;
-		if(shooter.getAimReadiness()){
+		shooterState = ShooterState.RAMPING;
+		if(shooter.isReadyToAim()){
 			shooter.setHoodPosition(0);
 		}
 		shooter.setShootingPercentOutput(0);
@@ -138,27 +140,27 @@ public class Manipulator {
 
 	public void sensorAdvanceGeneva(boolean spin, boolean forward){
 		double genevaSpeed = 0.5;
-		if(genevaState == genevaStates.STOPPED && spin){
+		if(genevaState == GenevaState.STOPPED && spin){
 			if(forward){
 				feeder.setSpin(-genevaSpeed);
-				genevaDirection = genevaStates.FORWARD;
+				genevaDirection = GenevaState.FORWARD;
 			}
 			else{
 				feeder.setSpin(genevaSpeed);
-				genevaDirection = genevaStates.BACKWARD;
+				genevaDirection = GenevaState.BACKWARD;
 			}
-			genevaState = genevaStates.MOVE;
+			genevaState = GenevaState.MOVE;
 		}
-		else if(genevaState == genevaStates.MOVE && !feeder.getGenevaSwitchState()){
-			genevaState = genevaStates.MOVING;
+		else if(genevaState == GenevaState.MOVE && !feeder.getGenevaSwitchState()){
+			genevaState = GenevaState.MOVING;
 		}
-		else if(genevaState == genevaStates.MOVING && feeder.getGenevaSwitchState()){
+		else if(genevaState == GenevaState.MOVING && feeder.getGenevaSwitchState()){
 			feeder.setSpin(0);
-			genevaState = genevaStates.STOPPED;
+			genevaState = GenevaState.STOPPED;
 		}
 
-		if(genevaState == genevaStates.MOVE || genevaState == genevaStates.MOVING){
-			if(genevaDirection == genevaStates.FORWARD){
+		if(genevaState == GenevaState.MOVE || genevaState == GenevaState.MOVING){
+			if(genevaDirection == GenevaState.FORWARD){
 				feeder.setSpin(-genevaSpeed);
 			}
 			else{
