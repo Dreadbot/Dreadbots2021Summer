@@ -301,6 +301,10 @@ public class Drive {
         return rightBackMotor.getEncoder();
     }
 
+    public AHRS getGyroscope() {
+        return gyroscope;
+    }
+
     /**
      * DriveMode is the enumeration of the default final value multipliers for teleop.
      */

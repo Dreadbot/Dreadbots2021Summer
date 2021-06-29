@@ -22,85 +22,125 @@ import java.util.ArrayList;
  * project.
  */
 public class Robot extends TimedRobot {
-  // SUBSYSTEMS
-	public Drive drive;
-	public Shooter shooter;
-	//public Intake intake;
-	//public Feeder feeder;
-	//public Manipulator manipulator;
-	//public Ultra sonic2;
+    // SUBSYSTEMS
+    public Drive drive;
+    public Shooter shooter;
+    public Intake intake;
+    public Feeder feeder;
+    public Manipulator manipulator;
 
-	// JOYSTICKS
-	public DreadbotController primaryJoystick;
-	public DreadbotController secondaryJoystick;
+    // JOYSTICKS
+    public DreadbotController primaryJoystick;
+    public DreadbotController secondaryJoystick;
 
-	// TESTING ONLY
-	//public ArrayList<Subsystem> testingSubsystems;
-	public int currentTestingIndex;
-	public boolean isTestingCompleted;
+    // TESTING ONLY
+    //public ArrayList<Subsystem> testingSubsystems;
+//	public int currentTestingIndex;
+//	public boolean isTestingCompleted;
 
-	// GAME STATE
-	//private Autonomous autonomous;
-  //private Teleoperated teleoperated;
-  
-  @Override
-  public void robotInit() {
+    // GAME STATE
+    //private Autonomous autonomous;
+    //private Teleoperated teleoperated;
 
-		// Joystick Initialization
-		primaryJoystick = new DreadbotController(0);
-		secondaryJoystick = new DreadbotController(1);
+    @Override
+    public void robotInit() {
+        // Joystick Initialization
+        primaryJoystick = new DreadbotController(0);
+        secondaryJoystick = new DreadbotController(1);
 
-		// Subsystem Initialization
-		drive = new Drive();
-		//drive.tankDrive(0.1, 0.0);
-		shooter = new Shooter();
-		/*intake = new Intake();
+        // Subsystem Initialization
+        drive = new Drive();
+        shooter = new Shooter();
+		intake = new Intake();
 		feeder = new Feeder();
 		manipulator = new Manipulator(intake,
 			feeder,
-			shooter);*/
+			shooter);
 
-		//sonic1 = new Ultra(Constants.ULTRA_PING_CHANNEL_ID, Constants.ULTRA_ECHO_CHANNEL_ID);
-		// sonic2 = new Ultra(6, 7);
-
-		// Game State Initialization
+        // Game State Initialization
 		/*teleoperated = new Teleoperated(primaryJoystick,
 			secondaryJoystick,
 			manipulator,
 			sparkDrive);
 		autonomous = new Autonomous(sparkDrive, teleoperated.getTeleopFunctions(), manipulator, teleoperated);*/
 
-		// Testing Initialization
-		//testingSubsystems = new ArrayList<>();
-		//testingSubsystems.add(sparkDrive);
-		//testingSubsystems.add(manipulator);
+        // Testing Initialization
+        //testingSubsystems = new ArrayList<>();
+        //testingSubsystems.add(sparkDrive);
+        //testingSubsystems.add(manipulator);
+    }
 
-  }
+    @Override
+    public void robotPeriodic() {
+        drive.periodic();
+    }
 
-  @Override
-  public void robotPeriodic() {}
+    @Override
+    public void autonomousInit() {
+        //autonomous.autonomousInit();
+    }
 
-  @Override
-  public void autonomousInit() {}
+    @Override
+    public void autonomousPeriodic() {
+        //autonomous.autonomousPeriodic();
+    }
 
-  @Override
-  public void autonomousPeriodic() {}
+    @Override
+    public void teleopInit() {
+        // SmartDashboard Setup
+        SmartDashboard.putNumber("Shooter P", .0025);
+        SmartDashboard.putNumber("Shooter I", 3.3e-7);
+        SmartDashboard.putNumber("Shooter D", 0.03);
+        SmartDashboard.putNumber("Shooter Target Speed", 3550);
 
-  @Override
-  public void teleopInit() {}
+        // Setup shooter for teleop
+        shooter.setVisionLight(true);
+        shooter.setHoodPercentOutput(0.25);
+        shooter.setUpperLimitHit(false);
+        shooter.setLowerLimitHit(false);
+        shooter.setReadyToAim(false);
 
-  @Override
-  public void teleopPeriodic() {}
+        drive.getGyroscope().reset();
 
-  @Override
-  public void disabledInit() {}
+        intake.deployIntake();
+    }
 
-  @Override
-  public void disabledPeriodic() {}
+    @Override
+    public void teleopPeriodic() {
+        // Drive
+//        teleoperated.teleopDrive();
 
-  @Override
-  public void testInit() {}
+        // Shooter
+        shooter.setPID(SmartDashboard.getNumber("Shooter P", .0025),
+            SmartDashboard.getNumber("Shooter I", 3.3e-7),
+            SmartDashboard.getNumber("Shooter D", 0.03));
+        SmartDashboard.putNumber("Shooter RPM", manipulator.getShooter().getShootingSpeed());
 
-  @Override
-  public void testPeriodic() {}
+        shooter.hoodCalibration();
+
+        SmartDashboard.putNumber("Shooter Velocity (Actual)", shooter.getShootingSpeed());
+//        teleoperated.teleopShooter();
+
+        // Intake
+//        teleoperated.teleopIntake();
+    }
+
+    @Override
+    public void disabledInit() {
+//        autonomous.disabledInit();
+
+        shooter.setVisionLight(false);
+    }
+
+    @Override
+    public void disabledPeriodic() {
+    }
+
+    @Override
+    public void testInit() {
+    }
+
+    @Override
+    public void testPeriodic() {
+    }
 }

@@ -115,6 +115,10 @@ public class Shooter {
 		return readyToAim;
 	}
 
+	public void setReadyToAim(boolean readyToAim) {
+		this.readyToAim = readyToAim;
+	}
+
 	public int getHoodPosition() {
 		return (int) aimingMotorEncoder.getPosition();
 	}
