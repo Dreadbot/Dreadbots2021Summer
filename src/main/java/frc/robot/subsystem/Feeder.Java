@@ -11,6 +11,7 @@ public class Feeder {
 	// Hardware
 	private CANSparkMax genevaDrive = new CANSparkMax(DreadbotConstants.GENEVA_MOTOR_ID, CANSparkMax.MotorType.kBrushless);
 	private CANEncoder genevaEncoder;
+	private CANPIDController genevaController;
 	private Solenoid punch = new Solenoid(DreadbotConstants.PUNCH_SOLENOID_ID);
 
 	// Limit Switch Sensors
@@ -19,8 +20,9 @@ public class Feeder {
 
 	public Feeder() {
 		genevaDrive.setIdleMode(CANSparkMax.IdleMode.kBrake);
-		CANPIDController genevaController = genevaDrive.getPIDController();
+		genevaController = genevaDrive.getPIDController();
 		genevaEncoder = genevaDrive.getEncoder();
+
 		genevaEncoder.setPosition(0);
 		
 		genevaController.setP(0.002);

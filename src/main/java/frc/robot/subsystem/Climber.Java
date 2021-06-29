@@ -1,8 +1,11 @@
+package frc.robot.subsystem;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.Solenoid;
 
-public class Climber{
+public class Climber {
     
     private Solenoid telescopeSol;
     private CANSparkMax winchMotor;
@@ -13,7 +16,7 @@ public class Climber{
         telescopeSol = new Solenoid(-1);
     }
 
-    public void SetTelescope(bool extended){
+    public void SetTelescope(boolean extended){
         telescopeSol.set(extended);
     }
     public void SetWinch(double winchSpeed){
