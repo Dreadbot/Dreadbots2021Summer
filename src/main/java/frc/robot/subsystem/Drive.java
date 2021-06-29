@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.utility.DreadbotMath;
 
 public class Drive {
     private static final MotorType K_MOTORTYPE = CANSparkMaxLowLevel.MotorType.kBrushless;
@@ -138,14 +140,123 @@ public class Drive {
         rightBackMotor.set(0.0);
     }
 
+    /**
+     * New drive method as recommended by WPILib, which is velocity-based over percentage output.
+     *
+     * @param xSpeed forward/backward speed input
+     * @param zRotation rotational input
+     */
     public void drive(double xSpeed, double zRotation) {
+        this.drive(xSpeed, zRotation, DriveMode.NORMAL);
+    }
+
+    /**
+     * New drive method as recommended by WPILib, which is velocity-based over percentage output.
+     *
+     * @param xSpeed forward/backward speed input
+     * @param zRotation rotational input
+     * @param driveMode The drive mode setting (final multiplier).
+     */
+    public void drive(double xSpeed, double zRotation, final DriveMode driveMode) {
+        this.drive(xSpeed, zRotation, driveMode, 0.09);
+    }
+
+    /**
+     * New drive method as recommended by WPILib, which is velocity-based over percentage output.
+     *
+     * @param xSpeed forward/backward speed input
+     * @param zRotation rotational input
+     * @param driveMode The drive mode setting (final multiplier).
+     * @param joystickDeadband The applied joystick deadband.
+     */
+    public void drive(double xSpeed, double zRotation, final DriveMode driveMode, final double joystickDeadband) {
+        // Apply deadband
+        xSpeed = DreadbotMath.applyDeadbandToValue(xSpeed, -joystickDeadband, joystickDeadband, 0.0d);
+        zRotation = DreadbotMath.applyDeadbandToValue(zRotation, -joystickDeadband, joystickDeadband, 0.0d);
+
         // Apply a slew rate limiter and use value as a percentage of max speed.
-        xSpeed = -speedLimiter.calculate(xSpeed) * K_MAX_SPEED;
+        xSpeed = -speedLimiter.calculate(xSpeed) * K_MAX_SPEED * driveMode.finalValueMultiplier;
 
         // Apply a slew rate limiter and calculate the angular velocity
-        zRotation = -rotLimiter.calculate(zRotation) * K_MAX_ANGULAR_SPEED;
+        zRotation = -rotLimiter.calculate(zRotation) * K_MAX_ANGULAR_SPEED * driveMode.finalValueMultiplier;
 
         this.robotDrive.arcadeDrive(xSpeed, zRotation);
+    }
+
+    /**
+     * An improved and more readable version of the Dreadbot's homemade tank
+     * drive function with default values for final value multiplier and joystick
+     * deadband.
+     *
+     * @param forwardAxisFactor  The forward factor of the drivetrain control.
+     * @param rotationAxisFactor The rotational factor of the drivetrain control.
+     */
+    @Deprecated
+    public void tankDrive(double forwardAxisFactor,
+                          double rotationAxisFactor) {
+        tankDrive(forwardAxisFactor, rotationAxisFactor, DriveMode.NORMAL);
+    }
+
+    /**
+     * An improved and more readable version of the Dreadbot's homemade tank
+     * drive function with default values for the joystick deadband.
+     *
+     * @param forwardAxisFactor  The forward factor of the drivetrain control.
+     * @param rotationAxisFactor The rotational factor of the drivetrain control.
+     * @param driveMode          The drive mode setting (final multiplier).
+     */
+    @Deprecated
+    public void tankDrive(double forwardAxisFactor,
+                          double rotationAxisFactor,
+                          final DriveMode driveMode) {
+        tankDrive(forwardAxisFactor, rotationAxisFactor, driveMode, 0.09);
+    }
+
+    /**
+     * An improved and more readable version of the Dreadbot's homemade tank
+     * drive function.
+     *
+     * @param forwardAxisFactor  The forward factor of the drivetrain control.
+     * @param rotationAxisFactor The rotational factor of the drivetrain control.
+     * @param driveMode          The drive mode setting (final multiplier).
+     * @param joystickDeadband   The applied joystick deadband.
+     */
+    @Deprecated
+    public void tankDrive(double forwardAxisFactor,
+                          double rotationAxisFactor,
+                          final DriveMode driveMode,
+                          final double joystickDeadband) {
+        double[] speedControllerOutputs = new double[4];
+
+        // Clamp Values to Acceptable Ranges (between -1.0 and 1.0).
+        forwardAxisFactor = DreadbotMath.clampValue(forwardAxisFactor, -1.0d, 1.0d);
+        rotationAxisFactor = DreadbotMath.clampValue(rotationAxisFactor, -1.0d, 1.0d);
+
+        // Apply an Optional Joystick Deadband
+        forwardAxisFactor = DreadbotMath.applyDeadbandToValue(forwardAxisFactor, -joystickDeadband, joystickDeadband, 0.0d);
+        rotationAxisFactor = DreadbotMath.applyDeadbandToValue(rotationAxisFactor, -joystickDeadband, joystickDeadband, 0.0d);
+
+        // Essential Drive Math based on the two movement factors.
+        double leftFinalSpeed = -forwardAxisFactor + rotationAxisFactor;
+        double rightFinalSpeed = forwardAxisFactor + rotationAxisFactor;
+
+        // Assign each motor value to the output side it's on.
+        speedControllerOutputs[0] = leftFinalSpeed;
+        speedControllerOutputs[1] = rightFinalSpeed;
+        speedControllerOutputs[2] = leftFinalSpeed;
+        speedControllerOutputs[3] = rightFinalSpeed;
+
+        // Add the final multiplier to the values.
+        for (int i = 0; i < speedControllerOutputs.length; i++)
+            speedControllerOutputs[i] *= driveMode.finalValueMultiplier;
+
+        // Normalize the values to become between 1.0 and -1.0.
+        DreadbotMath.normalizeValues(speedControllerOutputs);
+
+        leftFrontMotor.set(speedControllerOutputs[0]);
+        rightFrontMotor.set(speedControllerOutputs[1]);
+        leftBackMotor.set(speedControllerOutputs[2]);
+        rightBackMotor.set(speedControllerOutputs[3]);
     }
 
     private static void pidControllerSetup(CANSparkMax motor) {
@@ -188,5 +299,21 @@ public class Drive {
 
     public CANEncoder getRightBackMotorEncoder() {
         return rightBackMotor.getEncoder();
+    }
+
+    /**
+     * DriveMode is the enumeration of the default final value multipliers for teleop.
+     */
+    public enum DriveMode {
+        TURBO(0.9),
+        NORMAL(0.5),
+        TURTLE(0.2),
+        ADJUSTMENT(0.1);
+
+        public double finalValueMultiplier;
+
+        DriveMode(double finalValueMultiplier) {
+            this.finalValueMultiplier = finalValueMultiplier;
+        }
     }
 }
