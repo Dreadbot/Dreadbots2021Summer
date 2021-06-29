@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystem.Manipulator;
 import frc.robot.subsystem.SparkDrive;
 import frc.robot.subsystem.SparkDrive.DriveMode;
-import frc.robot.utility.Constants;
+import frc.robot.utility.DreadbotConstants;
 import frc.robot.utility.DreadbotController;
 import frc.robot.utility.TeleopFunctions;
 
