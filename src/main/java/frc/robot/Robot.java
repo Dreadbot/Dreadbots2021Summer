@@ -38,11 +38,6 @@ public class Robot extends TimedRobot {
     public DreadbotController primaryJoystick;
     public DreadbotController secondaryJoystick;
 
-    // TESTING ONLY
-    //public ArrayList<Subsystem> testingSubsystems;
-//	public int currentTestingIndex;
-//	public boolean isTestingCompleted;
-
     // GAME STATE
     private Autonomous autonomous;
     private Teleoperated teleoperated;
@@ -68,11 +63,6 @@ public class Robot extends TimedRobot {
 			manipulator,
 			sparkDrive);
 		autonomous = new Autonomous(sparkDrive, teleoperated.getTeleopFunctions(), manipulator, teleoperated);
-
-        // Testing Initialization
-        //testingSubsystems = new ArrayList<>();
-        //testingSubsystems.add(sparkDrive);
-        //testingSubsystems.add(manipulator);
     }
 
     @Override
