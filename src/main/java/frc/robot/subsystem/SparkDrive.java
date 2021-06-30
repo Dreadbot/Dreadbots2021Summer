@@ -29,7 +29,7 @@ public class SparkDrive {
     public static final double K_V = 0.0437d; // volt seconds per meter
     public static final double K_A = 0.00512d; // volt seconds squared per meter
     public static final double K_P = 1.19e-10d; // meters per second
-    
+
     // Robot Details
     public static final double kTrackwidthMeters = 0.705d; // meters
 
@@ -55,7 +55,7 @@ public class SparkDrive {
         // Back motors follow front motors 
         this.leftBackMotor.follow(this.leftFrontMotor);
         this.rightBackMotor.follow(this.rightFrontMotor);
-        
+
         // Set up motor controllers
         this.leftFrontMotor.restoreFactoryDefaults();
         this.leftBackMotor.restoreFactoryDefaults();
@@ -141,7 +141,7 @@ public class SparkDrive {
     /**
      * New drive method as recommended by WPILib, which is velocity-based over percentage output.
      *
-     * @param xSpeed The forward/backward factor of the drivetrain control.
+     * @param xSpeed    The forward/backward factor of the drivetrain control.
      * @param zRotation The rotational factor of the drivetrain control.
      */
     public void drive(double xSpeed, double zRotation) {
@@ -151,7 +151,7 @@ public class SparkDrive {
     /**
      * New drive method as recommended by WPILib, which is velocity-based over percentage output.
      *
-     * @param xSpeed The forward/backward factor of the drivetrain control.
+     * @param xSpeed    The forward/backward factor of the drivetrain control.
      * @param zRotation The rotational factor of the drivetrain control.
      * @param driveMode The drive mode setting (final multiplier).
      */
@@ -162,9 +162,9 @@ public class SparkDrive {
     /**
      * New drive method as recommended by WPILib, which is velocity-based over percentage output.
      *
-     * @param xSpeed The forward/backward factor of the drivetrain control.
-     * @param zRotation The rotational factor of the drivetrain control.
-     * @param driveMode The drive mode setting (final multiplier).
+     * @param xSpeed           The forward/backward factor of the drivetrain control.
+     * @param zRotation        The rotational factor of the drivetrain control.
+     * @param driveMode        The drive mode setting (final multiplier).
      * @param joystickDeadband The applied joystick deadband.
      */
     public void drive(double xSpeed, double zRotation, final DriveMode driveMode, final double joystickDeadband) {

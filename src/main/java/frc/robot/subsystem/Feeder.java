@@ -8,52 +8,52 @@ import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.utility.DreadbotConstants;
 
 public class Feeder {
-	// Hardware
-	private CANSparkMax genevaDrive = new CANSparkMax(DreadbotConstants.GENEVA_MOTOR_ID, CANSparkMax.MotorType.kBrushless);
-	private CANEncoder genevaEncoder;
-	private CANPIDController genevaController;
-	private Solenoid punch = new Solenoid(DreadbotConstants.PUNCH_SOLENOID_ID);
+    // Hardware
+    private CANSparkMax genevaDrive = new CANSparkMax(DreadbotConstants.GENEVA_MOTOR_ID, CANSparkMax.MotorType.kBrushless);
+    private CANEncoder genevaEncoder;
+    private CANPIDController genevaController;
+    private Solenoid punch = new Solenoid(DreadbotConstants.PUNCH_SOLENOID_ID);
 
-	// Limit Switch Sensors
-	private DigitalInput genevaLimitSwitch = new DigitalInput(DreadbotConstants.GENEVA_LIMIT_SWITCH_PORT);
-	private DigitalInput punchLimitSwitch = new DigitalInput(DreadbotConstants.PUNCH_LIMIT_SWITCH_PORT);
+    // Limit Switch Sensors
+    private DigitalInput genevaLimitSwitch = new DigitalInput(DreadbotConstants.GENEVA_LIMIT_SWITCH_PORT);
+    private DigitalInput punchLimitSwitch = new DigitalInput(DreadbotConstants.PUNCH_LIMIT_SWITCH_PORT);
 
-	public Feeder() {
-		genevaDrive.setIdleMode(CANSparkMax.IdleMode.kBrake);
-		genevaController = genevaDrive.getPIDController();
-		genevaEncoder = genevaDrive.getEncoder();
+    public Feeder() {
+        genevaDrive.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        genevaController = genevaDrive.getPIDController();
+        genevaEncoder = genevaDrive.getEncoder();
 
-		genevaEncoder.setPosition(0);
-		
-		genevaController.setP(0.002);
-		genevaController.setI(1e-6);
-		genevaController.setD(.02);
-		genevaController.setFF(0.000015);
-		genevaController.setIZone(0);
-		genevaController.setOutputRange(-1.0, 1.0);
-	}
+        genevaEncoder.setPosition(0);
 
-	public void setSpin(double power) {
-		genevaDrive.set(power);
-	}
+        genevaController.setP(0.002);
+        genevaController.setI(1e-6);
+        genevaController.setD(.02);
+        genevaController.setFF(0.000015);
+        genevaController.setIZone(0);
+        genevaController.setOutputRange(-1.0, 1.0);
+    }
 
-	public boolean getPunchExtension() {
-		return punch.get();
-	}
+    public void setSpin(double power) {
+        genevaDrive.set(power);
+    }
 
-	public void setPunchExtension(boolean extended) {
-		punch.set(extended);
-	}
+    public boolean getPunchExtension() {
+        return punch.get();
+    }
 
-	public boolean getGenevaSwitchState() {
-		return !genevaLimitSwitch.get();
-	}
+    public void setPunchExtension(boolean extended) {
+        punch.set(extended);
+    }
 
-	public boolean getPunchSwitchState() {
-		return punchLimitSwitch.get();
-	}
+    public boolean getGenevaSwitchState() {
+        return !genevaLimitSwitch.get();
+    }
 
-	public double getGenevaPosition() {
-		return genevaEncoder.getPosition();
-	}
+    public boolean getPunchSwitchState() {
+        return punchLimitSwitch.get();
+    }
+
+    public double getGenevaPosition() {
+        return genevaEncoder.getPosition();
+    }
 }

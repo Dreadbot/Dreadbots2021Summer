@@ -11,13 +11,9 @@ import frc.robot.gamestate.Teleoperated;
 import frc.robot.subsystem.Feeder;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Manipulator;
-//import frc.robot.gamestate.Autonomous;
-//import frc.robot.gamestate.Teleoperated;
 import frc.robot.subsystem.Shooter;
 import frc.robot.subsystem.SparkDrive;
-//import frc.robot.utility.Constants;
 import frc.robot.utility.DreadbotController;
-//import frc.robot.utility.logger.RobotLogger;
 
 
 /**
@@ -51,18 +47,18 @@ public class Robot extends TimedRobot {
         // Subsystem Initialization
         sparkDrive = new SparkDrive();
         shooter = new Shooter();
-		intake = new Intake();
-		feeder = new Feeder();
-		manipulator = new Manipulator(intake,
-			feeder,
-			shooter);
+        intake = new Intake();
+        feeder = new Feeder();
+        manipulator = new Manipulator(intake,
+            feeder,
+            shooter);
 
         // Game State Initialization
-		teleoperated = new Teleoperated(primaryJoystick,
-			secondaryJoystick,
-			manipulator,
-			sparkDrive);
-		autonomous = new Autonomous(sparkDrive, teleoperated.getTeleopFunctions(), manipulator, teleoperated);
+        teleoperated = new Teleoperated(primaryJoystick,
+            secondaryJoystick,
+            manipulator,
+            sparkDrive);
+        autonomous = new Autonomous(sparkDrive, teleoperated.getTeleopFunctions(), manipulator, teleoperated);
     }
 
     @Override
