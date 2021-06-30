@@ -82,8 +82,7 @@ public class SparkDrive {
     public void periodic() {
         final double leftPosition = getLeftFrontMotorEncoder().getPosition() * 0.0683;
         final double rightPosition = getRightFrontMotorEncoder().getPosition() * 0.0683;
-        final var newPose = odometry.update(gyroscope.getRotation2d(),
-                leftPosition, -rightPosition);
+        odometry.update(gyroscope.getRotation2d(), leftPosition, -rightPosition);
     }
 
     public Pose2d getPose() {
@@ -142,8 +141,8 @@ public class SparkDrive {
     /**
      * New drive method as recommended by WPILib, which is velocity-based over percentage output.
      *
-     * @param xSpeed forward/backward speed input
-     * @param zRotation rotational input
+     * @param xSpeed The forward/backward factor of the drivetrain control.
+     * @param zRotation The rotational factor of the drivetrain control.
      */
     public void drive(double xSpeed, double zRotation) {
         this.drive(xSpeed, zRotation, DriveMode.NORMAL);
@@ -152,8 +151,8 @@ public class SparkDrive {
     /**
      * New drive method as recommended by WPILib, which is velocity-based over percentage output.
      *
-     * @param xSpeed forward/backward speed input
-     * @param zRotation rotational input
+     * @param xSpeed The forward/backward factor of the drivetrain control.
+     * @param zRotation The rotational factor of the drivetrain control.
      * @param driveMode The drive mode setting (final multiplier).
      */
     public void drive(double xSpeed, double zRotation, final DriveMode driveMode) {
@@ -163,8 +162,8 @@ public class SparkDrive {
     /**
      * New drive method as recommended by WPILib, which is velocity-based over percentage output.
      *
-     * @param xSpeed forward/backward speed input
-     * @param zRotation rotational input
+     * @param xSpeed The forward/backward factor of the drivetrain control.
+     * @param zRotation The rotational factor of the drivetrain control.
      * @param driveMode The drive mode setting (final multiplier).
      * @param joystickDeadband The applied joystick deadband.
      */
