@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import frc.robot.utility.DreadbotConstants;
 import frc.robot.utility.DreadbotMath;
 
 public class SparkDrive {
@@ -66,41 +67,68 @@ public class SparkDrive {
         this.rightFrontMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         this.rightBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
-        // Set up gyroscope
-        this.gyroscope.reset();
-
         // Set up the PID Controllers
         SparkDrive.pidControllerSetup(leftFrontMotor);
         SparkDrive.pidControllerSetup(leftBackMotor);
         SparkDrive.pidControllerSetup(rightFrontMotor);
         SparkDrive.pidControllerSetup(rightBackMotor);
 
+        // Set up gyroscope
+        this.gyroscope.reset();
+
         // Set up odometry
         this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyroscope.getYaw()));
     }
 
+    /**
+     * Updates the robot drivetrain odometry, using the current encoder positions to calculate
+     * where the robot is.
+     */
     public void periodic() {
-        final double leftPosition = getLeftFrontMotorEncoder().getPosition() * 0.0683;
-        final double rightPosition = getRightFrontMotorEncoder().getPosition() * 0.0683;
+        final double leftPosition = getLeftFrontMotorEncoder().getPosition() * DreadbotConstants.revolutionsToMeters;
+        final double rightPosition = getRightFrontMotorEncoder().getPosition() * DreadbotConstants.revolutionsToMeters;
         odometry.update(gyroscope.getRotation2d(), leftPosition, -rightPosition);
     }
 
+    /**
+     * Get the current position of the robot in meters 2D (x, y) through the robot drivetrain
+     * odometry.
+     *
+     * @return Pose2d object with x & y components of the robot's position.
+     */
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
 
+    /**
+     * Returns a DifferentialDriveWheelSpeeds object with the values of the speeds of the wheels.
+     *
+     * @return DifferentialDriveWheelSpeeds object with wheel speeds of the drivetrain.
+     */
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(
-            getLeftFrontMotorEncoder().getVelocity() * 0.00114,
-            -getRightFrontMotorEncoder().getVelocity() * 0.00114
+            getLeftFrontMotorEncoder().getVelocity() * DreadbotConstants.revolutionsPerMinuteToMetersPerSecond,
+            -getRightFrontMotorEncoder().getVelocity() * DreadbotConstants.revolutionsPerMinuteToMetersPerSecond
         );
     }
 
+    /**
+     * Resets the odometry calculator, usually used after a trajectory following task has been
+     * completed.
+     *
+     * @param pose The position of the robot on the field
+     */
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
         odometry.resetPosition(pose, gyroscope.getRotation2d());
     }
 
+    /**
+     * Drive method that takes a desired motor controller voltage feedforward as input.
+     *
+     * @param leftVolts  Amount of voltage to be applied to each left side motor controller.
+     * @param rightVolts Amount of voltage to be applied to each right side motor controller.
+     */
     public void driveVolts(double leftVolts, double rightVolts) {
         leftFrontMotor.setVoltage(leftVolts);
         leftBackMotor.setVoltage(leftVolts);
@@ -108,6 +136,9 @@ public class SparkDrive {
         rightBackMotor.setVoltage(rightVolts);
     }
 
+    /**
+     * Resets the motor controller encoders back to a zero position.
+     */
     public void resetEncoders() {
         getLeftFrontMotorEncoder().setPosition(0.0);
         getLeftBackMotorEncoder().setPosition(0.0);
@@ -115,22 +146,45 @@ public class SparkDrive {
         getRightBackMotorEncoder().setPosition(0.0);
     }
 
+    /**
+     * Gets the Average distance recorded by the motor controller encoders for a general idea of how
+     * far the robot has moved
+     *
+     * @return Average distance traveled recorded between the left and right sides of the drivetrain.
+     */
     public double getAverageEncoderDistance() {
-        return (getLeftFrontMotorEncoder().getPosition() + getRightFrontMotorEncoder().getPosition()) * (0.5 * 0.0683);
+        return (getLeftFrontMotorEncoder().getPosition() + getRightFrontMotorEncoder().getPosition()) * (0.5 * DreadbotConstants.revolutionsToMeters);
     }
 
-    public void zeroHeading() {
+    /**
+     * Resets the gyroscope to 0 degrees.
+     */
+    public void resetGyroscope() {
         gyroscope.reset();
     }
 
+    /**
+     * Gets the current heading of the gyroscope. (Greater values are counter-clockwise)
+     *
+     * @return Current heading of the gyroscope.
+     */
     public double getHeading() {
         return gyroscope.getYaw();
     }
 
+    /**
+     * Gets the current rate of change of the
+     * heading measure of the gyroscope (Greater values are counter-clockwise).
+     *
+     * @return Current rate of change of the heading measure.
+     */
     public double getTurnRate() {
         return -gyroscope.getRate();
     }
 
+    /**
+     * Stops all motors.
+     */
     public void stop() {
         leftFrontMotor.set(0.0);
         leftBackMotor.set(0.0);
@@ -185,6 +239,8 @@ public class SparkDrive {
      * An improved and more readable version of the Dreadbot's homemade tank
      * drive function with default values for final value multiplier and joystick
      * deadband.
+     * This function has since been deprecated, as we want to move toward the WPI
+     * recommended drive code.
      *
      * @param forwardAxisFactor  The forward factor of the drivetrain control.
      * @param rotationAxisFactor The rotational factor of the drivetrain control.
@@ -198,6 +254,8 @@ public class SparkDrive {
     /**
      * An improved and more readable version of the Dreadbot's homemade tank
      * drive function with default values for the joystick deadband.
+     * This function has since been deprecated, as we want to move toward the WPI
+     * recommended drive code.
      *
      * @param forwardAxisFactor  The forward factor of the drivetrain control.
      * @param rotationAxisFactor The rotational factor of the drivetrain control.
@@ -213,6 +271,8 @@ public class SparkDrive {
     /**
      * An improved and more readable version of the Dreadbot's homemade tank
      * drive function.
+     * This function has since been deprecated, as we want to move toward the WPI
+     * recommended drive code.
      *
      * @param forwardAxisFactor  The forward factor of the drivetrain control.
      * @param rotationAxisFactor The rotational factor of the drivetrain control.
@@ -258,6 +318,7 @@ public class SparkDrive {
     }
 
     private static void pidControllerSetup(CANSparkMax motor) {
+        // All four motor controller PIDs should have the same setting.
         CANPIDController pidController = motor.getPIDController();
         pidController.setP(0.2);
         pidController.setI(1e-4);
