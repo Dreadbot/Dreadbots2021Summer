@@ -1,71 +1,74 @@
 package frc.robot.utility;
 
-public class DreadbotMath {
+/**
+ * Provides several functions and utilities common to robot code development,
+ * including range functions, joystick deadband calculators, and drive value
+ * normalizers.
+ */
+public abstract class DreadbotMath {
+
     /**
-     * Java Generic In-Range Function
+     * In-Range Function
      * <p>
      * The in-range function determines whether a value is 'in-between' a given minimum
      * value and a maximum value.
      *
-     * @param <T>          Generic Type that extends that of a Comparable object.
-     * @param inputValue   The input value
-     * @param minimumValue The minimum value of the constraints
-     * @param maximumValue The maximum values of the constraints
-     * @return Boolean if the inputValue is in the range specified.
+     * @param <T>         Comparable type.
+     * @param inputValue  The input value.
+     * @param bottomValue The bottom value of the range.
+     * @param topValue    The top value of the range.
+     * @return Returns 'true' if the inputValue is within the constraints, 'false' otherwise.
      */
-    public static <T extends Comparable<T>> boolean inRange(final T inputValue, final T minimumValue,
-                                                            final T maximumValue) {
-        if (inputValue.compareTo(minimumValue) < 0)
+    public static <T extends Comparable<T>> boolean inRange(final T inputValue, final T bottomValue,
+                                                            final T topValue) {
+        if (inputValue.compareTo(bottomValue) < 0)
             return false;
-        return inputValue.compareTo(maximumValue) <= 0;
+        return inputValue.compareTo(topValue) <= 0;
     }
 
     /**
-     * Java Generic Clamp Function
+     * Clamp Function
      * <p>
-     * Clamp functions specify specific constraints for a value's validity. For
-     * example, if you need to ensure that a number is within certain constraints to
-     * avoid error-prone code, use a clamp function.
+     * Clamp functions will 'clamp' a value between two constraints, such that
+     * the returned value will be no greater than the 'top' of the clamp and
+     * no less than the 'bottom' of the clamp.
      *
-     * @param <T>          Generic Type that extends that of a Comparable object.
-     *                     (Can be compared)
-     * @param testingValue The given value to use against the clamp restraints.
-     * @param clampMinimum The minimum value for the clamp function.
-     * @param clampMaximum The maximum value for the clamp function.
-     * @return The result or output of the clamp function.
+     * @param <T>         Comparable type.
+     * @param inputValue  The given value to clamp.
+     * @param clampBottom The bottom of the clamp constraints.
+     * @param clampTop    The top of the clamp constraints.
+     * @return The output of the clamp function.
      */
-    public static <T extends Comparable<T>> T clampValue(final T testingValue, final T clampMinimum,
-                                                         final T clampMaximum) {
-        if (testingValue.compareTo(clampMinimum) < 0)
-            return clampMinimum;
-        if (testingValue.compareTo(clampMaximum) > 0)
-            return clampMaximum;
+    public static <T extends Comparable<T>> T clampValue(final T inputValue, final T clampBottom,
+                                                         final T clampTop) {
+        if (inputValue.compareTo(clampBottom) < 0)
+            return clampBottom;
+        if (inputValue.compareTo(clampTop) > 0)
+            return clampTop;
 
-        return testingValue;
+        return inputValue;
     }
 
     /**
-     * Java Generic Deadband Processing Function
+     * Deadband Processing function
      * <p>
-     * A deadband is a band of input values in the domain of a function in a control
-     * system where the output should be zero. Deadband regions are used in control
-     * systems to prevent unecessary undefined behavior due to unwanted control
-     * precision, preventing oscillation or unwanted events.
+     * Determines whether the input is within a set of given constraints. If it is, this function
+     * returns a 'zero' or otherwise neutral value. This function is useful for preventing noise
+     * or unwanted input from controllers.
      *
-     * @param <T>           Generic Type that extends that of a Comparable object.
-     *                      (Can be compared)
-     * @param testingValue  The given value to use against the deadband constraints.
-     * @param deadbandMin   The minimum value for the deadband function.
-     * @param deadbandMax   The maximum value for the deadband function.
-     * @param deadbandValue The value to return when deadband constraints are met.
-     * @return The result or output of the deadband function.
+     * @param <T>                 Comparable type.
+     * @param inputValue          The given value to use against the deadband constraints.
+     * @param deadbandZoneMinimum The bottom value of the given constraints.
+     * @param deadbandZoneMaximum The maximum value of the given constraints.
+     * @param neutralValue        The value to return when the input is within the given constraints.
+     * @return The output of the deadband function.
      */
-    public static <T extends Comparable<T>> T applyDeadbandToValue(final T testingValue, final T deadbandMin,
-                                                                   final T deadbandMax, final T deadbandValue) {
-        if (testingValue.compareTo(deadbandMin) > 0 && testingValue.compareTo(deadbandMax) < 0)
-            return deadbandValue;
+    public static <T extends Comparable<T>> T applyDeadbandToValue(final T inputValue, final T deadbandZoneMinimum,
+                                                                   final T deadbandZoneMaximum, final T neutralValue) {
+        if (inputValue.compareTo(deadbandZoneMinimum) > 0 && inputValue.compareTo(deadbandZoneMaximum) < 0)
+            return neutralValue;
 
-        return testingValue;
+        return inputValue;
     }
 
     /**
