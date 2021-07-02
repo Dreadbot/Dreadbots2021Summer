@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import frc.robot.utility.DreadbotConstants;
+import frc.robot.utility.DreadbotController;
 import frc.robot.utility.DreadbotMath;
 
 public class SparkDrive {
@@ -377,6 +378,19 @@ public class SparkDrive {
 
         DriveMode(double finalValueMultiplier) {
             this.finalValueMultiplier = finalValueMultiplier;
+        }
+
+        /**
+         * Returns a teleoperated driver mode given the inputs of the driver's controller.
+         *
+         * @param controller The controller reference.
+         * @return The drive mode selected by the driver.
+         */
+        public static DriveMode fromDriverInput(DreadbotController controller) {
+            if (controller.isRightTriggerPressed()) return DriveMode.TURBO;
+            if (controller.isRightBumperPressed()) return DriveMode.TURTLE;
+
+            return DriveMode.NORMAL;
         }
     }
 }

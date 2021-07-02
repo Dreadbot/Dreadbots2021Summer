@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystem.Manipulator;
 import frc.robot.subsystem.SparkDrive;
+import frc.robot.subsystem.SparkDrive.DriveMode;
 
 public class TeleopFunctions {
     private final double slop = 1.5;
@@ -84,12 +85,8 @@ public class TeleopFunctions {
         // forward/backward axis still based on
         // controller input, but the rotation axis of the drive base based on the
         // rotation rate found
-        // TODO Write this better
-        SparkDrive.DriveMode driveMode = SparkDrive.DriveMode.NORMAL;
-        driveMode = primaryJoystick.isRightTriggerPressed() ? SparkDrive.DriveMode.TURBO : SparkDrive.DriveMode.NORMAL;
-        driveMode = primaryJoystick.isRightBumperPressed() ? SparkDrive.DriveMode.TURTLE : SparkDrive.DriveMode.NORMAL;
 
-        sparkDrive.tankDrive(primaryJoystick.getYAxis(), -currentRotationRate, driveMode);
+        sparkDrive.tankDrive(primaryJoystick.getYAxis(), -currentRotationRate);
 
         // If the difference between the current angle and the target angle is within an
         // allowable constant,

@@ -66,10 +66,8 @@ public class Teleoperated {
     }
 
     public void teleopDrive() {
-        //TODO Write this better
-        DriveMode driveMode = DriveMode.NORMAL;
-        driveMode = primaryJoystick.isRightTriggerPressed() ? DriveMode.TURBO : DriveMode.NORMAL;
-        driveMode = primaryJoystick.isRightBumperPressed() ? DriveMode.TURTLE : DriveMode.NORMAL;
+        // Get the DriveMode from controller input.
+        DriveMode driveMode = DriveMode.fromDriverInput(primaryJoystick);
 
         sparkDrive.drive(primaryJoystick.getYAxis(),
             primaryJoystick.getZAxis(),
