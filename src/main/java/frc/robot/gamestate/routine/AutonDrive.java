@@ -24,6 +24,11 @@ public class AutonDrive extends AutonSegment {
 		this.sparkDrive = sparkDrive;
 	}
 
+	/**
+	 * @param distanceMeters The given distance to drive, in meters.
+	 * @param forward Determines if the motion is moving forward (according to motor direction) or not.
+	 * @param sparkDrive The drive object reference
+	 */
 	public AutonDrive(double distanceMeters, boolean forward, SparkDrive sparkDrive) {
 		this.distanceMeters = distanceMeters;
 		this.forward = forward;
