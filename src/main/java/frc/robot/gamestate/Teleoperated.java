@@ -71,7 +71,7 @@ public class Teleoperated {
         driveMode = primaryJoystick.isRightTriggerPressed() ? DriveMode.TURBO : DriveMode.NORMAL;
         driveMode = primaryJoystick.isRightBumperPressed() ? DriveMode.TURTLE : DriveMode.NORMAL;
 
-        sparkDrive.tankDrive(primaryJoystick.getYAxis(),
+        sparkDrive.drive(primaryJoystick.getYAxis(),
             primaryJoystick.getZAxis(),
             driveMode);
     }

@@ -45,11 +45,11 @@ public class AutonDrive extends AutonSegment {
 		double distanceFromInitialPosition = Math.abs(sparkDrive.getAverageEncoderDistance() - initialPositionMeters);
 
 		if(distanceFromInitialPosition < distanceMeters) {
-			sparkDrive.tankDrive((forward ? 1.0 : -1.0) * 0.5, 0.5);
+			sparkDrive.drive((forward ? 1.0 : -1.0) * 0.5, 0.5);
 			return;
 		}
 
-		sparkDrive.tankDrive(0.0, 0.0);
+		sparkDrive.drive(0.0, 0.0);
 		complete = true;
 	}
 
