@@ -29,11 +29,11 @@ public class Autonomous {
     /**
      * Default Constructor (no-args)
      */
-    public Autonomous(SparkDrive sparkDrive, TeleopFunctions teleopFunctions, Manipulator manipulator, Teleoperated teleoperated) {
+    public Autonomous(SparkDrive sparkDrive, Manipulator manipulator, Teleoperated teleoperated) {
         this.teleoperated = teleoperated;
         this.manipulator = manipulator;
         this.sparkDrive = sparkDrive;
-        this.teleopFunctions = teleopFunctions;
+        this.teleopFunctions = teleoperated.getTeleopFunctions();
 
         this.autonRoutines = new HashMap<>();
 

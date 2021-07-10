@@ -23,43 +23,24 @@ import frc.robot.utility.DreadbotController;
  * project.
  */
 public class Robot extends TimedRobot {
+
     // SUBSYSTEMS
-    public SparkDrive sparkDrive;
-    public Shooter shooter;
-    public Intake intake;
-    public Feeder feeder;
-    public Manipulator manipulator;
+    public SparkDrive sparkDrive = new SparkDrive();
+    public Shooter shooter = new Shooter();
+    public Intake intake = new Intake();
+    public Feeder feeder = new Feeder();
+    public Manipulator manipulator = new Manipulator(intake, feeder, shooter);
 
     // JOYSTICKS
-    public DreadbotController primaryJoystick;
-    public DreadbotController secondaryJoystick;
+    public DreadbotController primaryJoystick = new DreadbotController(0);
+    public DreadbotController secondaryJoystick = new DreadbotController(1);
 
     // GAME STATE
-    private Autonomous autonomous;
-    private Teleoperated teleoperated;
+    private final Teleoperated teleoperated = new Teleoperated(primaryJoystick, secondaryJoystick, manipulator, sparkDrive);
+    private Autonomous autonomous = new Autonomous(sparkDrive, manipulator, teleoperated);
 
     @Override
-    public void robotInit() {
-        // Joystick Initialization
-        primaryJoystick = new DreadbotController(0);
-        secondaryJoystick = new DreadbotController(1);
-
-        // Subsystem Initialization
-        sparkDrive = new SparkDrive();
-        shooter = new Shooter();
-        intake = new Intake();
-        feeder = new Feeder();
-        manipulator = new Manipulator(intake,
-            feeder,
-            shooter);
-
-        // Game State Initialization
-        teleoperated = new Teleoperated(primaryJoystick,
-            secondaryJoystick,
-            manipulator,
-            sparkDrive);
-        autonomous = new Autonomous(sparkDrive, teleoperated.getTeleopFunctions(), manipulator, teleoperated);
-    }
+    public void robotInit() { }
 
     @Override
     public void robotPeriodic() {
