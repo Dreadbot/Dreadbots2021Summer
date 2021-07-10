@@ -21,9 +21,7 @@ public abstract class DreadbotMath {
      */
     public static <T extends Comparable<T>> boolean inRange(final T inputValue, final T bottomValue,
                                                             final T topValue) {
-        if (inputValue.compareTo(bottomValue) < 0)
-            return false;
-        return inputValue.compareTo(topValue) <= 0;
+        return inputValue.compareTo(bottomValue) >= 0 && inputValue.compareTo(topValue) <= 0;
     }
 
     /**
@@ -65,7 +63,7 @@ public abstract class DreadbotMath {
      */
     public static <T extends Comparable<T>> T applyDeadbandToValue(final T inputValue, final T deadbandZoneMinimum,
                                                                    final T deadbandZoneMaximum, final T neutralValue) {
-        if (inputValue.compareTo(deadbandZoneMinimum) > 0 && inputValue.compareTo(deadbandZoneMaximum) < 0)
+        if(DreadbotMath.inRange(inputValue, deadbandZoneMinimum, deadbandZoneMaximum))
             return neutralValue;
 
         return inputValue;
