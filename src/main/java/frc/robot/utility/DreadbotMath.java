@@ -89,7 +89,6 @@ public abstract class DreadbotMath {
         if (magnitude > 1.0)
             for (int i = 0; i < values.length; i++)
                 values[i] /= magnitude;
-
     }
 
     /**
@@ -120,7 +119,7 @@ public abstract class DreadbotMath {
      * @return The greatest element in the array.
      */
     public static double maximumElement(final double[] values) {
-        double currentMaximumElement = 0.0d;
+        double currentMaximumElement = values[0];
 
         for (final double element : values)
             if (element > currentMaximumElement)
@@ -136,7 +135,7 @@ public abstract class DreadbotMath {
      * @return The greatest element in the array.
      */
     public static float maximumElement(final float[] values) {
-        float currentMaximumElement = 0.0f;
+        float currentMaximumElement = values[0];
 
         for (final float element : values)
             if (element > currentMaximumElement)
