@@ -2,6 +2,7 @@ package frc.robot.gamestate;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.gamestate.routine.AutonDrive;
 import frc.robot.gamestate.routine.AutonRoutine;
 import frc.robot.gamestate.routine.AutonTrajectory;
 import frc.robot.subsystem.Manipulator;
@@ -9,6 +10,7 @@ import frc.robot.subsystem.SparkDrive;
 import frc.robot.utility.TeleopFunctions;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Logic Container for the Autonomous Period and Infinite Recharge at Home Challenges.
@@ -37,30 +39,33 @@ public class Autonomous {
 
         this.autonRoutines = new HashMap<>();
 
+        this.autonRoutines.put("drive", new AutonRoutine(sparkDrive)
+                .addSegment(new AutonDrive(5.0, sparkDrive)));
+
         // Barrel Run Path
-        this.autonRoutines.put("barrel", new AutonRoutine(sparkDrive)
-            .addSegment(new AutonTrajectory(
-                sparkDrive, "paths/path_feet_0.wpilib.json"))
-        );
+        // this.autonRoutines.put("barrel", new AutonRoutine(sparkDrive)
+        //     .addSegment(new AutonTrajectory(
+        //         sparkDrive, "paths/path_feet_0.wpilib.json"))
+        // );
 
         // Bounce Path
-        this.autonRoutines.put("bounce", new
-            AutonRoutine(sparkDrive)
-            .addSegment(new AutonTrajectory(
-                sparkDrive, "paths/bounce_start.wpilib.json"))
-            .addSegment(new AutonTrajectory(
-                sparkDrive, "paths/bounce_first.wpilib.json"))
-            .addSegment(new AutonTrajectory(
-                sparkDrive, "paths/bounce_second.wpilib.json"))
-            .addSegment(new AutonTrajectory(
-                sparkDrive, "paths/bounce_final.wpilib.json"))
-        );
+        // this.autonRoutines.put("bounce", new
+        //     AutonRoutine(sparkDrive)
+        //     .addSegment(new AutonTrajectory(
+        //         sparkDrive, "paths/bounce_start.wpilib.json"))
+        //     .addSegment(new AutonTrajectory(
+        //         sparkDrive, "paths/bounce_first.wpilib.json"))
+        //     .addSegment(new AutonTrajectory(
+        //         sparkDrive, "paths/bounce_second.wpilib.json"))
+        //     .addSegment(new AutonTrajectory(
+        //         sparkDrive, "paths/bounce_final.wpilib.json"))
+        // );
 
         // Slalom Path
-        this.autonRoutines.put("slalom", new AutonRoutine(sparkDrive)
-            .addSegment(new AutonTrajectory(
-                sparkDrive, "paths/slalom.wpilib.json"))
-        );
+        // this.autonRoutines.put("slalom", new AutonRoutine(sparkDrive)
+        //     .addSegment(new AutonTrajectory(
+        //         sparkDrive, "paths/slalom.wpilib.json"))
+        // );
 
         this.selectedRoutine = "bounce";
 
@@ -80,18 +85,23 @@ public class Autonomous {
     public void autonomousInit() {
         System.out.println("Autonomous.autonomousInit");
 
-        selectedRoutine = autonChooser.getSelected();
-
         sparkDrive.getGyroscope().reset();
-
-        // Call init method for first autonomous segment in the routine
-        autonRoutines.get(selectedRoutine).autonomousInit();
 
         manipulator.getShooter().setVisionLight(true);
         manipulator.getShooter().setHoodPercentOutput(0.25);
         manipulator.getShooter().setLowerLimitHit(false);
         manipulator.getShooter().setUpperLimitHit(false);
         manipulator.getShooter().setReadyToAim(false);
+
+        selectedRoutine = autonChooser.getSelected();
+        if(selectedRoutine == null) {
+            System.out.println("No autonomous routine selected! Robot will not move...");
+            return;
+        }
+
+        // Call init method for first autonomous segment in the routine
+        if(!autonRoutines.containsKey(selectedRoutine)) return;
+        autonRoutines.get(selectedRoutine).autonomousInit();
     }
 
     /**
@@ -100,6 +110,9 @@ public class Autonomous {
      */
     public void autonomousPeriodic() {
         manipulator.getShooter().hoodCalibration();
+
+        if(selectedRoutine == null) return;
+        if(!autonRoutines.containsKey(selectedRoutine)) return;
 
         // Run the current segment's autonomousPeriodic() code.
         autonRoutines.get(selectedRoutine).autonomousPeriodic();
@@ -112,6 +125,6 @@ public class Autonomous {
     public void disabledInit() {
         // Performs a reset of all the routine data so it can be run multiple times
         // in the same on/off cycle of the robot.
-        autonRoutines.get(selectedRoutine).disabledInit();
+        autonRoutines.values().forEach(AutonRoutine::disabledInit);
     }
 }
