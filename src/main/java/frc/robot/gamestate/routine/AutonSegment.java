@@ -55,5 +55,5 @@ public abstract class AutonSegment {
 	 */
 	public void disabledInit(){
 		//default disabledInit()
-	};
+	}
 }
