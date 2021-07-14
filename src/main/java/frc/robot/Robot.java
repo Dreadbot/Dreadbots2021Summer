@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
 
     // GAME STATE
     private final Teleoperated teleoperated = new Teleoperated(primaryJoystick, secondaryJoystick, manipulator, sparkDrive, climber);
-    private Autonomous autonomous = new Autonomous(sparkDrive, manipulator, teleoperated);
+    private final Autonomous autonomous = new Autonomous(sparkDrive, manipulator, teleoperated);
 
     @Override
     public void robotInit() { }
@@ -75,9 +75,8 @@ public class Robot extends TimedRobot {
          shooter.setLowerLimitHit(false);
          shooter.setReadyToAim(false);
 
-         sparkDrive.getGyroscope().reset();
-
-         intake.deployIntake();
+         teleoperated.initDrive();
+         teleoperated.initIntake();
     }
 
     @Override

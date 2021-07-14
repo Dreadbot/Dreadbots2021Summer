@@ -1,24 +1,21 @@
 package frc.robot.gamestate;
 
-import javax.security.auth.x500.X500Principal;
-
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.Manipulator;
 import frc.robot.subsystem.SparkDrive;
 import frc.robot.subsystem.SparkDrive.DriveMode;
-import frc.robot.utility.DreadbotConstants;
 import frc.robot.utility.DreadbotController;
 import frc.robot.utility.TeleopFunctions;
 
 public class Teleoperated {
-    private DreadbotController primaryJoystick;
-    private DreadbotController secondaryJoystick;
-    private Manipulator manipulator;
-    private Climber climber;
-    private SparkDrive sparkDrive;
-    private TeleopFunctions teleopFunctions;
+    private final DreadbotController primaryJoystick;
+    private final DreadbotController secondaryJoystick;
+    private final Manipulator manipulator;
+    private final Climber climber;
+    private final SparkDrive sparkDrive;
+    private final TeleopFunctions teleopFunctions;
+
     private AimShootStates aimShootState;
 
     final int maxAimCounts;
