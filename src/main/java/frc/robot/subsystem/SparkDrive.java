@@ -22,9 +22,9 @@ public class SparkDrive {
     private static final MotorType K_MOTORTYPE = CANSparkMaxLowLevel.MotorType.kBrushless;
 
     // Drive Constants
-    public static final double K_MAX_SPEED = 3.0d; // meters per second
+    public static final double K_MAX_SPEED = 1.5d; // meters per second
     public static final double K_MAX_ACCELERATION = 1.5d; // meters per second squared
-    public static final double K_MAX_ANGULAR_SPEED = 2.0d * Math.PI; // radians per second
+    public static final double K_MAX_ANGULAR_SPEED = 0.5d * Math.PI; // radians per second
 
     // Voltage Feedforward Constants
     public static final double K_S = 0.229d; // volts
@@ -36,10 +36,10 @@ public class SparkDrive {
     public static final double kTrackwidthMeters = 0.705d; // meters
 
     // Motors
-    private final CANSparkMax leftFrontMotor = new CANSparkMax(0, K_MOTORTYPE);
-    private final CANSparkMax leftBackMotor = new CANSparkMax(1, K_MOTORTYPE);
+    private final CANSparkMax leftFrontMotor = new CANSparkMax(1, K_MOTORTYPE);
+    private final CANSparkMax leftBackMotor = new CANSparkMax(3, K_MOTORTYPE);
     private final CANSparkMax rightFrontMotor = new CANSparkMax(2, K_MOTORTYPE);
-    private final CANSparkMax rightBackMotor = new CANSparkMax(3, K_MOTORTYPE);
+    private final CANSparkMax rightBackMotor = new CANSparkMax(4, K_MOTORTYPE);
 
     // Gyroscope
     private final AHRS gyroscope = new AHRS(SerialPort.Port.kUSB);
@@ -231,7 +231,7 @@ public class SparkDrive {
         xSpeed = -speedLimiter.calculate(xSpeed) * K_MAX_SPEED * driveMode.finalValueMultiplier;
 
         // Apply a slew rate limiter and calculate the angular velocity
-        zRotation = -rotLimiter.calculate(zRotation) * K_MAX_ANGULAR_SPEED * driveMode.finalValueMultiplier;
+        zRotation = rotLimiter.calculate(zRotation) * K_MAX_ANGULAR_SPEED * driveMode.finalValueMultiplier;
 
         this.robotDrive.arcadeDrive(xSpeed, zRotation);
     }

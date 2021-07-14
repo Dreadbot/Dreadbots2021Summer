@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.gamestate.Autonomous;
 import frc.robot.gamestate.Teleoperated;
+import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.Feeder;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Manipulator;
@@ -30,6 +31,8 @@ public class Robot extends TimedRobot {
     public Intake intake = new Intake();
     public Feeder feeder = new Feeder();
     public Manipulator manipulator = new Manipulator(intake, feeder, shooter);
+
+    public Climber climber = new Climber();
 
     // JOYSTICKS
     public DreadbotController primaryJoystick = new DreadbotController(0);
@@ -59,47 +62,63 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        // SmartDashboard Setup
-        SmartDashboard.putNumber("Shooter P", .0025);
-        SmartDashboard.putNumber("Shooter I", 3.3e-7);
-        SmartDashboard.putNumber("Shooter D", 0.03);
-        SmartDashboard.putNumber("Shooter Target Speed", 3550);
+//         SmartDashboard Setup
+         SmartDashboard.putNumber("Shooter P", .0025);
+         SmartDashboard.putNumber("Shooter I", 3.3e-7);
+         SmartDashboard.putNumber("Shooter D", 0.03);
+         SmartDashboard.putNumber("Shooter Target Speed", 3550);
 
-        // Setup shooter for teleop
-        shooter.setVisionLight(true);
-        shooter.setHoodPercentOutput(0.25);
-        shooter.setUpperLimitHit(false);
-        shooter.setLowerLimitHit(false);
-        shooter.setReadyToAim(false);
+         // Setup shooter for teleop
+         shooter.setVisionLight(true);
+         shooter.setHoodPercentOutput(0.25);
+         shooter.setUpperLimitHit(false);
+         shooter.setLowerLimitHit(false);
+         shooter.setReadyToAim(false);
 
-        sparkDrive.getGyroscope().reset();
+         sparkDrive.getGyroscope().reset();
 
-        intake.deployIntake();
+         intake.deployIntake();
     }
 
     @Override
     public void teleopPeriodic() {
-        // Drive
-        teleoperated.teleopDrive();
+        // // Drive
+         teleoperated.teleopDrive();
 
-        // Shooter
-        shooter.setPID(SmartDashboard.getNumber("Shooter P", .0025),
-            SmartDashboard.getNumber("Shooter I", 3.3e-7),
-            SmartDashboard.getNumber("Shooter D", 0.03));
-        SmartDashboard.putNumber("Shooter RPM", manipulator.getShooter().getShootingSpeed());
+        // // Shooter
+         shooter.setPID(SmartDashboard.getNumber("Shooter P", .0025),
+             SmartDashboard.getNumber("Shooter I", 3.3e-7),
+             SmartDashboard.getNumber("Shooter D", 0.03));
+         SmartDashboard.putNumber("Shooter RPM", manipulator.getShooter().getShootingSpeed());
 
-        shooter.hoodCalibration();
+         shooter.hoodCalibration();
 
-        SmartDashboard.putNumber("Shooter Velocity (Actual)", shooter.getShootingSpeed());
-        teleoperated.teleopShooter();
+         SmartDashboard.putNumber("Shooter Velocity (Actual)", shooter.getShootingSpeed());
+         teleoperated.teleopShooter();
 
-        // Intake
+        // // Intake
         teleoperated.teleopIntake();
+
+        if(secondaryJoystick.isStartButtonPressed()) {
+            climber.SetTelescope(true);
+        } else if(secondaryJoystick.isBackButtonPressed()) {
+            climber.SetTelescope(false);
+        }
+
+        if(secondaryJoystick.isRightTriggerPressed()) {
+            climber.SetWinch(-0.5);
+        } else if(secondaryJoystick.isLeftTriggerPressed()) {
+            climber.SetWinch(0.5);
+        } else {
+            climber.SetWinch(0.0);
+        }
     }
 
     @Override
     public void disabledInit() {
         autonomous.disabledInit();
+
+        climber.SetWinch(0.0);
 
         shooter.setVisionLight(false);
     }

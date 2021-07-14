@@ -12,8 +12,8 @@ public class Climber {
     private CANPIDController winchPID;
 
     public Climber() {
-        winchMotor = new CANSparkMax(-1, CANSparkMaxLowLevel.MotorType.kBrushless);
-        telescopeSol = new Solenoid(-1);
+        winchMotor = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
+        telescopeSol = new Solenoid(3);
     }
 
     public void SetTelescope(boolean extended) {
