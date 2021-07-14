@@ -4,6 +4,7 @@ import javax.security.auth.x500.X500Principal;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.Manipulator;
 import frc.robot.subsystem.SparkDrive;
 import frc.robot.subsystem.SparkDrive.DriveMode;
@@ -15,6 +16,7 @@ public class Teleoperated {
     private DreadbotController primaryJoystick;
     private DreadbotController secondaryJoystick;
     private Manipulator manipulator;
+    private Climber climber;
     private SparkDrive sparkDrive;
     private TeleopFunctions teleopFunctions;
     private AimShootStates aimShootState;
@@ -34,12 +36,14 @@ public class Teleoperated {
     public Teleoperated(DreadbotController primaryJoystick,
                         DreadbotController secondaryJoystick,
                         Manipulator manipulator,
-                        SparkDrive sparkDrive) {
+                        SparkDrive sparkDrive,
+                        Climber climber) {
         this.primaryJoystick = primaryJoystick;
         this.secondaryJoystick = secondaryJoystick;
 
         this.manipulator = manipulator;
         this.sparkDrive = sparkDrive;
+        this.climber = climber;
         this.teleopFunctions = new TeleopFunctions(secondaryJoystick, manipulator, sparkDrive);
 
         aimShootState = AimShootStates.AIMING;
@@ -153,6 +157,22 @@ public class Teleoperated {
 
     public TeleopFunctions getTeleopFunctions() {
         return teleopFunctions;
+    }
+
+    public void teleopClimber() {
+        if(secondaryJoystick.isStartButtonPressed()) {
+            climber.SetTelescope(true);
+        } else if(secondaryJoystick.isBackButtonPressed()) {
+            climber.SetTelescope(false);
+        }
+
+        if(secondaryJoystick.isRightTriggerPressed()) {
+            climber.SetWinch(-0.5);
+        } else if(secondaryJoystick.isLeftTriggerPressed()) {
+            climber.SetWinch(0.5);
+        } else {
+            climber.SetWinch(0.0);
+        }
     }
 
     public enum AimShootStates {

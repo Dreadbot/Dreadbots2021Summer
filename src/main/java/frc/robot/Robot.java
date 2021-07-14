@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
     public DreadbotController secondaryJoystick = new DreadbotController(1);
 
     // GAME STATE
-    private final Teleoperated teleoperated = new Teleoperated(primaryJoystick, secondaryJoystick, manipulator, sparkDrive);
+    private final Teleoperated teleoperated = new Teleoperated(primaryJoystick, secondaryJoystick, manipulator, sparkDrive, climber);
     private Autonomous autonomous = new Autonomous(sparkDrive, manipulator, teleoperated);
 
     @Override
@@ -99,19 +99,7 @@ public class Robot extends TimedRobot {
         // // Intake
         teleoperated.teleopIntake();
 
-        if(secondaryJoystick.isStartButtonPressed()) {
-            climber.SetTelescope(true);
-        } else if(secondaryJoystick.isBackButtonPressed()) {
-            climber.SetTelescope(false);
-        }
-
-        if(secondaryJoystick.isRightTriggerPressed()) {
-            climber.SetWinch(-0.5);
-        } else if(secondaryJoystick.isLeftTriggerPressed()) {
-            climber.SetWinch(0.5);
-        } else {
-            climber.SetWinch(0.0);
-        }
+        teleoperated.teleopClimber();
     }
 
     @Override
