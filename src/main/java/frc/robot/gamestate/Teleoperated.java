@@ -128,6 +128,22 @@ public class Teleoperated {
         }
     }
 
+    public void teleopClimber() {
+        if(secondaryJoystick.isStartButtonPressed()) {
+            climber.SetTelescope(true);
+        } else if(secondaryJoystick.isBackButtonPressed()) {
+            climber.SetTelescope(false);
+        }
+
+        if(secondaryJoystick.isRightTriggerPressed()) {
+            climber.SetWinch(-0.5);
+        } else if(secondaryJoystick.isLeftTriggerPressed()) {
+            climber.SetWinch(0.5);
+        } else {
+            climber.SetWinch(0.0);
+        }
+    }
+
     public int aimingContinuousShoot(double distance, double targetAngle, double genevaSpeed) {
         int numPunches = 0;
 		double rpm = manipulator.getSelectedRPM(distance);
@@ -157,22 +173,6 @@ public class Teleoperated {
 
     public TeleopFunctions getTeleopFunctions() {
         return teleopFunctions;
-    }
-
-    public void teleopClimber() {
-        if(secondaryJoystick.isStartButtonPressed()) {
-            climber.SetTelescope(true);
-        } else if(secondaryJoystick.isBackButtonPressed()) {
-            climber.SetTelescope(false);
-        }
-
-        if(secondaryJoystick.isRightTriggerPressed()) {
-            climber.SetWinch(-0.5);
-        } else if(secondaryJoystick.isLeftTriggerPressed()) {
-            climber.SetWinch(0.5);
-        } else {
-            climber.SetWinch(0.0);
-        }
     }
 
     public enum AimShootStates {
