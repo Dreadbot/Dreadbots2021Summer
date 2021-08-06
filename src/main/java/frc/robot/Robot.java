@@ -15,6 +15,7 @@ import frc.robot.subsystem.Manipulator;
 import frc.robot.subsystem.Shooter;
 import frc.robot.subsystem.SparkDrive;
 import frc.robot.utility.DreadbotController;
+import frc.robot.subsystem.ColorWheel;
 
 
 /**
@@ -34,12 +35,14 @@ public class Robot extends TimedRobot {
 
     public Climber climber = new Climber();
 
+    public ColorWheel colorWheel = new ColorWheel();
+
     // JOYSTICKS
     public DreadbotController primaryJoystick = new DreadbotController(0);
     public DreadbotController secondaryJoystick = new DreadbotController(1);
 
     // GAME STATE
-    private final Teleoperated teleoperated = new Teleoperated(primaryJoystick, secondaryJoystick, manipulator, sparkDrive, climber);
+    private final Teleoperated teleoperated = new Teleoperated(primaryJoystick, secondaryJoystick, manipulator, sparkDrive, climber, colorWheel);
     private final Autonomous autonomous = new Autonomous(sparkDrive, manipulator, teleoperated);
 
     @Override
@@ -99,6 +102,9 @@ public class Robot extends TimedRobot {
         teleoperated.teleopIntake();
 
         teleoperated.teleopClimber();
+
+        //Color Wheel
+        teleoperated.colorWheelControls();
     }
 
     @Override

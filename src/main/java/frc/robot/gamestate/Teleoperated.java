@@ -7,6 +7,8 @@ import frc.robot.subsystem.SparkDrive;
 import frc.robot.subsystem.SparkDrive.DriveMode;
 import frc.robot.utility.DreadbotController;
 import frc.robot.utility.TeleopFunctions;
+import frc.robot.subsystem.ColorWheel;
+import edu.wpi.first.wpilibj.util.Color;
 
 public class Teleoperated {
     private final DreadbotController primaryJoystick;
@@ -15,6 +17,7 @@ public class Teleoperated {
     private final Climber climber;
     private final SparkDrive sparkDrive;
     private final TeleopFunctions teleopFunctions;
+    private final ColorWheel colorWheel;
 
     private AimShootStates aimShootState;
 
@@ -30,11 +33,14 @@ public class Teleoperated {
 
     boolean firstAim = true;
 
+    Color targetColor;
+
     public Teleoperated(DreadbotController primaryJoystick,
                         DreadbotController secondaryJoystick,
                         Manipulator manipulator,
                         SparkDrive sparkDrive,
-                        Climber climber) {
+                        Climber climber, 
+                        ColorWheel colorWheel) {
         this.primaryJoystick = primaryJoystick;
         this.secondaryJoystick = secondaryJoystick;
 
@@ -42,6 +48,7 @@ public class Teleoperated {
         this.sparkDrive = sparkDrive;
         this.climber = climber;
         this.teleopFunctions = new TeleopFunctions(secondaryJoystick, manipulator, sparkDrive);
+        this.colorWheel = colorWheel;
 
         aimShootState = AimShootStates.AIMING;
         maxAimCounts = 150;
@@ -184,4 +191,19 @@ public class Teleoperated {
     public AimShootStates getAimShootStates() {
         return aimShootState;
     }
+    public void colorWheelControls(){
+        targetColor = colorWheel.ColorDataGetter();
+        if(primaryJoystick.isRightBumperPressed()){
+            colorWheel.colorWheelExtension.set(true);
+        }
+        else if (primaryJoystick.isRightTriggerPressed()){
+            colorWheel.colorWheelExtension.set(false);
+        }
+
+        if(primaryJoystick.isLeftBumperPressed() && targetColor != null){
+            colorWheel.RotateToColor(targetColor);
+        }
+        
+    }
+
 }

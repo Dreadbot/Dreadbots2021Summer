@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,10 +15,9 @@ import frc.robot.utility.DreadbotConstants;
 
 public class ColorWheel {
     //Hardware
-    private Solenoid colorWheelExtension;
-    private CANSparkMax colorWheelManipulator;
-    private ColorSensorV3 colorSensor;
-    private DreadbotController secondaryJoystick = new DreadbotController(1);
+    public Solenoid colorWheelExtension; // find port
+    private CANSparkMax colorWheelManipulator; // find port
+    private ColorSensorV3 colorSensor; // find port
     //variables
     private ColorMatch colorMatcher;
     private enum WheelState { NotSpinning, InitSpinning, Spinning}
@@ -30,26 +30,18 @@ public class ColorWheel {
     private double currentColorConfidence;
     private int currentButtonSetting;
     private final double colorConfidenceSetting = 0.9;
+    private Color colorToMatch;
 
     
     public ColorWheel() {
-        WheelState spinState = WheelState.NotSpinning;
         colorMatcher.addColorMatch(DreadbotConstants.kBlueTarget);
         colorMatcher.addColorMatch(DreadbotConstants.kGreenTarget);
         colorMatcher.addColorMatch(DreadbotConstants.kRedTarget);
         colorMatcher.addColorMatch(DreadbotConstants.kYellowTarget);
     }
 
-    public void ColorWheelExtensionControll(){
-        if(secondaryJoystick.isYButtonPressed()){
-            colorWheelExtension.set(true);
-        }
-        else if (secondaryJoystick.isXButtonPressed()){
-            colorWheelExtension.set(false);
-        }
-    }
     //Update RotateToNumber to not take in sensor and get current color from m_colorMatch
-    public void RotateToNumber(){
+    /*public void RotateToNumber(){
     SmartDashboard.putNumber("Number spins", numberOfSpins);
 
     SmartDashboard.putString("Spin State", currentSpinState.toString());
@@ -84,20 +76,20 @@ public class ColorWheel {
                 isTargetColorRed = false;
             }
         }
-    }
-
+    }*/ 
+    // Code wasn't used, keep until sure its not used
     public void SetRotationState(WheelState rotationState){
         currentSpinState = rotationState;
     }
 
     public void RotateToColor(Color targetColor){
-        currentColorConfidence = 0;
         currentColor = colorSensor.getColor();
         colorMatch = colorMatcher.matchClosestColor(currentColor);
+        currentColorConfidence = colorMatch.confidence;
 
         //SmartDashboard.putNumber("Spin State", currentSpinState);
 
-        if(currentSpinState == WheelState.NotSpinning && secondaryJoystick.isBackButtonPressed()){
+        if(currentSpinState == WheelState.NotSpinning /*&& secondaryJoystick.isBackButtonPressed()*/){
             currentSpinState = WheelState.InitSpinning;
             currentButtonSetting = 2;
         }
@@ -147,5 +139,31 @@ public class ColorWheel {
         }
 
         SmartDashboard.putNumber("Confidence", colorConfidence);
+    }
+
+    public Color ColorDataGetter(){
+        String colorData;
+        colorData = DriverStation.getInstance().getGameSpecificMessage();
+        if(colorData.length()>0){
+            switch (colorData.charAt(0)){
+                case 'B':
+                    colorToMatch =  Color.kBlue;
+                    break;
+                case 'G':
+                    colorToMatch =  Color.kGreen;
+                    break;
+                case 'R':
+                    colorToMatch =  Color.kRed;
+                    break;
+                case 'Y':
+                    colorToMatch =  Color.kYellow;
+                    break;
+                default:
+                SmartDashboard.putString("Color data is not recongized, color provided:", colorData);
+                break;
+            }
+            return colorToMatch; 
+        }
+        else {return null;}
     }
 }
