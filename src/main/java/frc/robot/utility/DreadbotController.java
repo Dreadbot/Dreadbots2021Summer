@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public final class DreadbotController {
     private final Joystick joystick;
 
+
     /**
      * Constructs a DreadbotController object with the ID of the gamepad HID, which is
      * passed to the WPI Joystick class underneath.
@@ -20,6 +21,43 @@ public final class DreadbotController {
         this.joystick = new Joystick(joystickPort);
     }
 
+    /*
+    * Controller bindings
+    * Controller 1
+    *   A-
+    *   B-
+    *   X-
+    *   Y-
+    *   RB-Pull ball intake up
+    *   RT-
+    *   LB-
+    *   LT-
+    *   Back-
+    *   Start-
+    *   Dpad up-
+    *   Dpad left-
+    *   Dpad right- 
+    *   Dpad down-
+    *   Right stick-Turn robot
+    *   Left stick- Drive Robot
+    * Controller 2
+    *   A-Intake pull ball in
+    *   B- Hold to shoot
+    *   X-Intake push ball out
+    *   Y- Hold to shoot 
+    *   RB-Advance geneva
+    *   RT-move climber winch down
+    *   LB-Reverse geneva
+    *   LT-Move climber winch up
+    *   Back-Put climber down
+    *   Start- Put Climber up
+    *   Dpad up-
+    *   Dpad left-
+    *   Dpad right- 
+    *   Dpad down-
+    *   Right stick-
+    *   Left stick-
+    **/ 
     /**
      * @return The value of the side-to-side motion on the left joystick.
      */

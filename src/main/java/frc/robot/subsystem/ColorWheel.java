@@ -12,14 +12,15 @@ import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utility.DreadbotController;
 import com.revrobotics.ColorSensorV3;
 import frc.robot.utility.DreadbotConstants;
+import edu.wpi.first.wpilibj.I2C;
 
 public class ColorWheel {
     //Hardware
-    public Solenoid colorWheelExtension; // find port
-    private CANSparkMax colorWheelManipulator; // find port
-    private ColorSensorV3 colorSensor; // find port
+    private final I2C.Port i2cPort = I2C.Port.kOnboard;
+    public Solenoid colorWheelExtension = new Solenoid(DreadbotConstants.COLOR_WHEEL_SOLENOID_ID);
+    private CANSparkMax colorWheelManipulator = new CANSparkMax(DreadbotConstants.COLOR_WHEEL_MOTOR_ID, CANSparkMax.MotorType.kBrushless);
+    private ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
     //variables
-    private ColorMatch colorMatcher;
     private enum WheelState { NotSpinning, InitSpinning, Spinning}
     private WheelState currentSpinState;
     private Color currentColor;
@@ -31,9 +32,12 @@ public class ColorWheel {
     private int currentButtonSetting;
     private final double colorConfidenceSetting = 0.9;
     private Color colorToMatch;
+    private ColorMatch colorMatcher = new ColorMatch();
 
     
     public ColorWheel() {
+        
+        
         colorMatcher.addColorMatch(DreadbotConstants.kBlueTarget);
         colorMatcher.addColorMatch(DreadbotConstants.kGreenTarget);
         colorMatcher.addColorMatch(DreadbotConstants.kRedTarget);
@@ -145,6 +149,7 @@ public class ColorWheel {
         String colorData;
         colorData = DriverStation.getInstance().getGameSpecificMessage();
         if(colorData.length()>0){
+            SmartDashboard.putString("Color:", colorData);
             switch (colorData.charAt(0)){
                 case 'B':
                     colorToMatch =  Color.kBlue;

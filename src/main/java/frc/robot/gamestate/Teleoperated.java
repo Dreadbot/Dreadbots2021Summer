@@ -138,7 +138,6 @@ public class Teleoperated {
         } else if(secondaryJoystick.isBackButtonPressed()) {
             climber.SetTelescope(false);
         }
-
         if(secondaryJoystick.isRightTriggerPressed()) {
             climber.SetWinch(-0.5);
         } else if(secondaryJoystick.isLeftTriggerPressed()) {
