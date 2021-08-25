@@ -38,6 +38,8 @@ public class AutonShoot extends AutonSegment{
 //			SmartDashboard.getNumber("Shooter D", 0.03));
 //		SmartDashboard.putNumber("SHOOTER STATE", teleoperated.getAimShootStates().ordinal());
 
+		if(!manipulator.getShooter().isReadyToAim()) return;
+
 		if(!doneShooting){
 			if(teleoperated.aimingContinuousShoot(targetDistance, targetAngle, 0.4) >= numBalls){
 				//this.doneShooting = true;

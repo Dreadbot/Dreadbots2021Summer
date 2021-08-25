@@ -110,7 +110,7 @@ public class Shooter {
         lowerLimitHit = value;
     }
 
-    boolean isReadyToAim() {
+    public boolean isReadyToAim() {
         return readyToAim;
     }
 

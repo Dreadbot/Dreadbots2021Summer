@@ -55,6 +55,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        shooter.setVisionLight(true);
+        shooter.setHoodPercentOutput(0.25);
+        shooter.setUpperLimitHit(false);
+        shooter.setLowerLimitHit(false);
+        shooter.setReadyToAim(false);
+
         autonomous.autonomousInit();
     }
 
