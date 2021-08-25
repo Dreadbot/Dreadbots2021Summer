@@ -2,15 +2,12 @@ package frc.robot.gamestate;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.gamestate.routine.AutonDrive;
-import frc.robot.gamestate.routine.AutonRoutine;
-import frc.robot.gamestate.routine.AutonTrajectory;
+import frc.robot.gamestate.routine.*;
 import frc.robot.subsystem.Manipulator;
 import frc.robot.subsystem.SparkDrive;
 import frc.robot.utility.TeleopFunctions;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Logic Container for the Autonomous Period and Infinite Recharge at Home Challenges.
@@ -39,35 +36,34 @@ public class Autonomous {
 
         this.autonRoutines = new HashMap<>();
 
-        this.autonRoutines.put("drive", new AutonRoutine(sparkDrive)
-                .addSegment(new AutonDrive(5.0, sparkDrive)));
+        this.autonRoutines.put("redBasic", new AutonRoutine(sparkDrive)
+            .addSegment(new AutonShoot(teleoperated, manipulator, 3))
+            .addSegment(new RotateToAngle(0, sparkDrive, teleopFunctions))
+            .addSegment(new AutonDrive(0.4, sparkDrive))
+        );
 
-        // Barrel Run Path
-        // this.autonRoutines.put("barrel", new AutonRoutine(sparkDrive)
-        //     .addSegment(new AutonTrajectory(
-        //         sparkDrive, "paths/path_feet_0.wpilib.json"))
-        // );
+//        this.autonRoutines.put("redTrenchRun", new AutonRoutine(sparkDrive)
+//            .deriveFrom(autonRoutines.get("redBasic"))
+//            .addSegment(new AutonTrajectory(sparkDrive, "TODO"))
+//            .addSegment(new AutonIntake(manipulator, 3.0))
+//            .addSegment(new RotateToAngle(0, sparkDrive, teleopFunctions))
+//            .addSegment(new AutonShoot(teleoperated, manipulator, 5))
+//        );
+//
+//        this.autonRoutines.put("redRendezVous", new AutonRoutine(sparkDrive)
+//            .deriveFrom(autonRoutines.get("redBasic"))
+//            .addSegment(new AutonTrajectory(sparkDrive, "TODO"))
+//            .addSegment(new AutonIntake(manipulator, 3.0))
+//            .addSegment(new RotateToAngle(0, sparkDrive, teleopFunctions))
+//            .addSegment(new AutonShoot(teleoperated, manipulator, 5))
+//        );
 
-        // Bounce Path
-        // this.autonRoutines.put("bounce", new
-        //     AutonRoutine(sparkDrive)
-        //     .addSegment(new AutonTrajectory(
-        //         sparkDrive, "paths/bounce_start.wpilib.json"))
-        //     .addSegment(new AutonTrajectory(
-        //         sparkDrive, "paths/bounce_first.wpilib.json"))
-        //     .addSegment(new AutonTrajectory(
-        //         sparkDrive, "paths/bounce_second.wpilib.json"))
-        //     .addSegment(new AutonTrajectory(
-        //         sparkDrive, "paths/bounce_final.wpilib.json"))
-        // );
+        var routineContainer = this.autonRoutines.keySet().stream().findFirst();
+        if(routineContainer.isEmpty()) {
+            throw new IllegalStateException("No autonomous routines defined!");
+        }
 
-        // Slalom Path
-        // this.autonRoutines.put("slalom", new AutonRoutine(sparkDrive)
-        //     .addSegment(new AutonTrajectory(
-        //         sparkDrive, "paths/slalom.wpilib.json"))
-        // );
-
-        this.selectedRoutine = "bounce";
+        selectedRoutine = routineContainer.get();
 
         this.autonChooser = new SendableChooser<>();
         this.autonChooser.setDefaultOption(selectedRoutine, selectedRoutine);

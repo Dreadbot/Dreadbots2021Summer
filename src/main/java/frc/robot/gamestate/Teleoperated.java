@@ -65,9 +65,9 @@ public class Teleoperated {
 
     public void teleopIntake() {
         if (secondaryJoystick.isXButtonPressed()) {
-            manipulator.getIntake().setSpeed(-4000);
+            manipulator.getIntake().setSpeed(-3000);
         } else if (secondaryJoystick.isAButtonPressed()) {
-            manipulator.getIntake().setSpeed(4000);
+            manipulator.getIntake().setSpeed(3000);
         } else {
             manipulator.getIntake().setPercentOutput(0);
         }
@@ -152,6 +152,9 @@ public class Teleoperated {
 		double rpm = manipulator.getSelectedRPM(distance);
         SmartDashboard.putNumber("Target Shooting Velocity", rpm);
 		double hoodPosition = manipulator.getSelectedHoodPosition(distance);
+
+        // TODO temp
+        SmartDashboard.putNumber("temp_hoodpos", hoodPosition);
 
         aimShootState = (aimCounts < maxAimCounts) ? AimShootStates.AIMING : AimShootStates.SHOOTING;
         SmartDashboard.putNumber("aimShootState", aimShootState.ordinal());

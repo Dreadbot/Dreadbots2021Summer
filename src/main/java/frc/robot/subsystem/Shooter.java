@@ -128,6 +128,7 @@ public class Shooter {
         position = minHoodPosition + (position * range);
 
         aimingMotorPID.setReference(position, ControlType.kPosition);
+        System.out.println(aimingMotorEncoder.getPosition());
     }
 
     public boolean getUpperLimitSwitchValue() {

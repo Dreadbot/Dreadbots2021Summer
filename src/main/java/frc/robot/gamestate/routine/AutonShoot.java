@@ -33,10 +33,11 @@ public class AutonShoot extends AutonSegment{
 
 	@Override
 	public void autonomousPeriodic() {
-		manipulator.getShooter().setPID(SmartDashboard.getNumber("Shooter P", .0025),
-			SmartDashboard.getNumber("Shooter I", 3.3e-7),
-			SmartDashboard.getNumber("Shooter D", 0.03));
-		SmartDashboard.putNumber("SHOOTER STATE", teleoperated.getAimShootStates().ordinal());
+//		manipulator.getShooter().setPID(SmartDashboard.getNumber("Shooter P", .0025),
+//			SmartDashboard.getNumber("Shooter I", 3.3e-7),
+//			SmartDashboard.getNumber("Shooter D", 0.03));
+//		SmartDashboard.putNumber("SHOOTER STATE", teleoperated.getAimShootStates().ordinal());
+
 		if(!doneShooting){
 			if(teleoperated.aimingContinuousShoot(targetDistance, targetAngle, 0.4) >= numBalls){
 				//this.doneShooting = true;
@@ -46,9 +47,9 @@ public class AutonShoot extends AutonSegment{
 			}
 		}
 
-		else{
-			manipulator.sensorAdvanceGeneva(false, true);
-		}
+//		else{
+//			manipulator.sensorAdvanceGeneva(false, true);
+//		}
 	}
 	
 }

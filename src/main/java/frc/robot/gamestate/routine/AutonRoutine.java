@@ -20,6 +20,12 @@ public class AutonRoutine {
         return this;
     }
 
+    public AutonRoutine deriveFrom(AutonRoutine routine) {
+        segments.addAll(routine.getSegments());
+
+        return this;
+    }
+
     public void autonomousInit() {
         sparkDrive.getGyroscope().reset();
 
@@ -77,5 +83,9 @@ public class AutonRoutine {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public ArrayList<AutonSegment> getSegments() {
+        return segments;
     }
 }
