@@ -1,5 +1,6 @@
 package frc.robot.subsystem;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 public class Manipulator {
@@ -15,6 +16,9 @@ public class Manipulator {
     private GenevaState genevaDirection = GenevaState.FORWARD;
     private ShooterState shooterState = ShooterState.RAMPING;
     private ShooterState lastShooterState;
+
+    private Timer timer = new Timer();
+    private boolean rotatingSafety = false;
 
     private int stateChangeCounter = 0;
     private final int countsToExtend = 5;
@@ -83,6 +87,8 @@ public class Manipulator {
         switch (shooterState) {
             case RAMPING:
                 feeder.setSpin(0);
+                timer.stop();
+                timer.reset();
                 break;
             case PUNCHING:
                 feeder.setPunchExtension(true);
@@ -95,8 +101,13 @@ public class Manipulator {
                 feeder.setPunchExtension(false);
                 break;
             case ADVANCE:
+                timer.start();
             case ADVANCING:
-                feeder.setSpin(genevaSpeed);
+                if(!rotatingSafety) feeder.setSpin(genevaSpeed);
+                if(timer.get() > 5.0d) {
+                    rotatingSafety = true;
+                    feeder.setSpin(0.0d);
+                }
                 break;
         }
 
@@ -185,6 +196,10 @@ public class Manipulator {
 
     public Shooter getShooter() {
         return shooter;
+    }
+
+    public void onEnable() {
+        rotatingSafety = false;
     }
 
 }

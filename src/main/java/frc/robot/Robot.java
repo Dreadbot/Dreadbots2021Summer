@@ -55,6 +55,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        manipulator.onEnable();
+
         shooter.setVisionLight(true);
         shooter.setHoodPercentOutput(0.25);
         shooter.setUpperLimitHit(false);
@@ -71,6 +73,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        manipulator.onEnable();
+
 //         SmartDashboard Setup
          SmartDashboard.putNumber("Shooter P", .0025);
          SmartDashboard.putNumber("Shooter I", 3.3e-7);
