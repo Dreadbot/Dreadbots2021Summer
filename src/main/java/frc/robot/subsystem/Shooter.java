@@ -146,7 +146,7 @@ public class Shooter {
             // Go back to center, ready to aim.
             readyToAim = true;
             range = maxHoodPosition - minHoodPosition;
-            setHoodPosition(0.5);
+            //setHoodPosition(0.5);
 
             return;
         }
