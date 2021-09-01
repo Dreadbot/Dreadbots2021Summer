@@ -27,8 +27,9 @@ public class AutonShoot extends AutonSegment{
 		doneShooting = false;
 		teleoperated.setAimShootState(Teleoperated.AimShootStates.AIMING);
 		manipulator.resetManipulatorElements();
-		targetAngle = SmartDashboard.getNumber("selectedAngle", 0.0);
-		targetDistance = SmartDashboard.getNumber("selectedDistance", 0.0);
+
+		SmartDashboard.putNumber("temp_hoodpos", 0);
+		SmartDashboard.putNumber("temp_shootspeed", 0);
 	}
 
 	@Override
@@ -39,6 +40,9 @@ public class AutonShoot extends AutonSegment{
 //		SmartDashboard.putNumber("SHOOTER STATE", teleoperated.getAimShootStates().ordinal());
 
 		if(!manipulator.getShooter().isReadyToAim()) return;
+
+		targetAngle = SmartDashboard.getNumber("selectedAngle", 0.0);
+		targetDistance = SmartDashboard.getNumber("selectedDistance", 0.0);
 
 		if(!doneShooting){
 			if(teleoperated.aimingContinuousShoot(targetDistance, targetAngle, 0.4) >= numBalls){

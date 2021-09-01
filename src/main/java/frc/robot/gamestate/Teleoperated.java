@@ -155,6 +155,7 @@ public class Teleoperated {
 
         // TODO temp
         SmartDashboard.putNumber("temp_hoodpos", hoodPosition);
+        SmartDashboard.putNumber("temp_shootspeed", rpm);
 
         aimShootState = (aimCounts < maxAimCounts) ? AimShootStates.AIMING : AimShootStates.SHOOTING;
         SmartDashboard.putNumber("aimShootState", aimShootState.ordinal());

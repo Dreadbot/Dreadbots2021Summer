@@ -7,8 +7,8 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 
 public class Shooter {
     // Limit Switch Variables
-    int minHoodPosition;
-    int maxHoodPosition;
+    private int minHoodPosition;
+    private int maxHoodPosition;
     boolean readyToAim = false;
     boolean lowerLimitHit = false;
     boolean upperLimitHit = false;

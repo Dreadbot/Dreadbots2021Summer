@@ -1,6 +1,7 @@
 package frc.robot.subsystem;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 public class Manipulator {
@@ -40,7 +41,7 @@ public class Manipulator {
 
         // Quadratic regression in return units RPM given inches from the power port target.
         // omega(x) = -0.0029x^2 + 0.188026x + 1.7676
-        double value = ((-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676) * 1000 + 200;
+        double value = ((-0.0029 * inches * inches) + (0.188026 * inches) + 1.7676) * 1000;
         value = MathUtil.clamp((Double) value, 0d, 4550d);
         return value;
     }
@@ -50,7 +51,8 @@ public class Manipulator {
 
         // Quadratic regression in return hood position given inches from the power port target.
         // p(x) = 7.14*10^-7x^2 + 8.51*10^-4x + 0.398
-        return ((7.14e-7 * inches * inches) + (8.51e-4 * inches) + 0.398);
+//        return ((7.14e-7 * inches * inches) + (8.51e-4 * inches) + 0.398);
+        return ((-0.0941 * inches * inches) + (4.96271 * inches) + 2.08)/100.;
     }
 
     public int continuousShoot(double aimPosition, double genevaSpeed, double shootingRPM) {
@@ -83,6 +85,11 @@ public class Manipulator {
             shooterState = ShooterState.RAMPING;
         }
 
+        if(shooterState != ShooterState.RAMPING && shooterState != ShooterState.PUNCHING) {
+            SmartDashboard.putNumber("temp_hoodpos", 0);
+            SmartDashboard.putNumber("temp_shootspeed", 0);
+        }
+
         //Choose behavior based on the FSM state
         switch (shooterState) {
             case RAMPING:
@@ -101,13 +108,14 @@ public class Manipulator {
                 feeder.setPunchExtension(false);
                 break;
             case ADVANCE:
-                timer.start();
+                //timer.start();
             case ADVANCING:
-                if(!rotatingSafety) feeder.setSpin(genevaSpeed);
-                if(timer.get() > 5.0d) {
-                    rotatingSafety = true;
-                    feeder.setSpin(0.0d);
-                }
+                feeder.setSpin(genevaSpeed);
+//                if(!rotatingSafety) feeder.setSpin(genevaSpeed);
+//                if(timer.get() > 5.0d) {
+//                    rotatingSafety = true;
+//                    feeder.setSpin(0.0d);
+//                }
                 break;
         }
 
