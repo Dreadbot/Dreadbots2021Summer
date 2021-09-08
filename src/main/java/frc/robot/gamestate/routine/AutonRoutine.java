@@ -2,6 +2,8 @@ package frc.robot.gamestate.routine;
 
 import java.util.ArrayList;
 
+import frc.robot.subsystem.Manipulator;
+import frc.robot.subsystem.Shooter;
 import frc.robot.subsystem.SparkDrive;
 
 public class AutonRoutine {
@@ -9,9 +11,11 @@ public class AutonRoutine {
     private int segmentIndex = 0;
     private boolean completed = false;
     private SparkDrive sparkDrive;
+    private Manipulator manipulator;
 
-    public AutonRoutine(SparkDrive sparkDrive) {
+    public AutonRoutine(SparkDrive sparkDrive, Manipulator manipulator) {
         this.sparkDrive = sparkDrive;
+        this.manipulator = manipulator;
     }
 
     public AutonRoutine addSegment(AutonSegment segment) {
@@ -40,6 +44,9 @@ public class AutonRoutine {
             return;
 
         // Run the current segment's autonomousPeriodic() code.
+//        if(segments.get(segmentIndex) instanceof AutonShoot) {
+//            manipulator.resetManipulatorElements();
+//        }
         segments.get(segmentIndex).autonomousPeriodic();
 
         // Check to see if the current segment's task has been completed

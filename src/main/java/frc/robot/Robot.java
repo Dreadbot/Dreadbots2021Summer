@@ -57,6 +57,12 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         manipulator.onEnable();
 
+        SmartDashboard.putNumber("Shooter P", .0025);
+        SmartDashboard.putNumber("Shooter I", 3.3e-7);
+        SmartDashboard.putNumber("Shooter D", 0.03);
+        SmartDashboard.putNumber("Shooter Target Speed", 3550);
+
+        // Setup shooter for teleop
         shooter.setVisionLight(true);
         shooter.setHoodPercentOutput(0.25);
         shooter.setUpperLimitHit(false);

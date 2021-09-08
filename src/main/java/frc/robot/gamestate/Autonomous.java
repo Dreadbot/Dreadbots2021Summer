@@ -36,7 +36,7 @@ public class Autonomous {
 
         this.autonRoutines = new HashMap<>();
 
-        this.autonRoutines.put("redBasic", new AutonRoutine(sparkDrive)
+        this.autonRoutines.put("redBasic", new AutonRoutine(sparkDrive, manipulator)
             .addSegment(new AutonShoot(teleoperated, manipulator, 3))
             .addSegment(new RotateToAngle(0, sparkDrive, teleopFunctions))
             //.addSegment(new AutonDrive(0.4, sparkDrive))

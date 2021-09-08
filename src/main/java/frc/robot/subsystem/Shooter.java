@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 public class Shooter {
@@ -128,7 +129,8 @@ public class Shooter {
         position = minHoodPosition + (position * range);
 
         aimingMotorPID.setReference(position, ControlType.kPosition);
-        System.out.println(aimingMotorEncoder.getPosition());
+        SmartDashboard.putNumber("shooteraimpos", aimingMotorEncoder.getPosition());
+        SmartDashboard.putNumber("shooteraimposexpected", position);
     }
 
     public boolean getUpperLimitSwitchValue() {
@@ -146,7 +148,7 @@ public class Shooter {
             // Go back to center, ready to aim.
             readyToAim = true;
             range = maxHoodPosition - minHoodPosition;
-            //setHoodPosition(0.5);
+            SmartDashboard.putNumber("range", range);
 
             return;
         }
@@ -154,6 +156,7 @@ public class Shooter {
         // Approach the lower limit of the hood position.
         if (getLowerLimitSwitchValue() && !lowerLimitHit) {
             setLowerLimitPosition(getHoodPosition());
+            SmartDashboard.putNumber("lowerlimit", getHoodPosition());
 
             // Approach the lower limit
             setHoodPercentOutput(-0.75);
@@ -164,6 +167,7 @@ public class Shooter {
         // Approach the upper limit of the hood position.
         if (getUpperLimitSwitchValue() && !upperLimitHit) {
             setUpperLimitPosition(getHoodPosition());
+            SmartDashboard.putNumber("upperlimit", getHoodPosition());
 
             // Approach the upper limit
             setHoodPercentOutput(0.75);
